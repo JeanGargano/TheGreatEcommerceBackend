@@ -1,6 +1,6 @@
 package com.ecommerce.Model;
-import com.ecommerce.Model.Enums.TipoSexo;
 import com.ecommerce.Model.Enums.TipoRopa;
+import com.ecommerce.Model.Enums.TipoSexo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
