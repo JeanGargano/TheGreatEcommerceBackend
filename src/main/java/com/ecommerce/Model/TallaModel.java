@@ -20,7 +20,7 @@ public class TallaModel {
     @Column(name= "talla")
     @Enumerated(EnumType.STRING)
     private Talla talla;
-    private Integer cantidad;
+
 
 
 }
