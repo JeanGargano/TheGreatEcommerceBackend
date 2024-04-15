@@ -16,26 +16,28 @@ public class ArticuloController {
 
     @Autowired
     IArticuloService articuloService;
+    @CrossOrigin(origins = "http://localhost:3000")
+
     @PostMapping("/save")
     public ResponseEntity<String> crearArticulo(@RequestBody ArticuloModel articulo) {
         String resultadoHttp = articuloService.crearArticulo(articulo);
         return new ResponseEntity<String>(resultadoHttp, HttpStatus.OK);
     }
 
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/get/all")
     public ResponseEntity<List<ArticuloModel>> listarArticulo(){
         List<ArticuloModel> articulos = articuloService.listarArticulo();
         return new ResponseEntity<>(articulos,HttpStatus.OK);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/get/{idArticulo}")
     public ResponseEntity<ArticuloModel> buscarArticuloPorId(@RequestBody @PathVariable Integer idArticulo) {
         ArticuloModel articulo = this.articuloService.obtenerArticuloPorId(idArticulo)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Error! No se encontró el articulo con el id " + idArticulo));
         return ResponseEntity.ok(articulo);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/del/{idArticulo}")
     public ResponseEntity<String> eliminarArticuloPorId(@RequestBody @PathVariable Integer idArticulo) {
         String resultado = this.articuloService.eliminarArticuloPorId(idArticulo);

@@ -25,7 +25,6 @@ public class ArticuloModel {
     @ManyToOne
     @JoinColumn(name= "idCategoria")
     private CategoriaModel idCategoria;
-
     private Boolean esPersonalizable;
 
 
