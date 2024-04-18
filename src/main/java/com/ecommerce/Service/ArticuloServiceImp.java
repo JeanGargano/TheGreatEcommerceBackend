@@ -44,7 +44,7 @@ public class ArticuloServiceImp implements IArticuloService {
 
         } else {
             this.ArticuloRepository.save(articulo);
-            textoRespuesta = "El artículo ha sido creado con éxito.";
+            textoRespuesta = "El  ha sido creado con éxito.";
         }
         return textoRespuesta;
     }
