@@ -2,14 +2,18 @@ package com.ecommerce.Service;
 
 
 
+import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.CategoriaModel;
+import com.ecommerce.Model.Enums.TipoSexo;
 import com.ecommerce.Repository.ICategoriaRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,20 +40,29 @@ public class CategoriaServiceImp implements ICategoriaService{
     public String crearCategoria(CategoriaModel categoria) {
         String textoRespuesta = "";
 
+        TipoSexo tipoSexo = categoria.getTipoSexo();
+        String tipoRopa = categoria.getTipoRopa();
+
+
         CategoriasExistentes = this.categoriaRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
         if(CategoriasExistentes.isEmpty()){
 
             this.categoriaRepository.save(categoria);
 
-            textoRespuesta = "La categoria ha sido creado con éxito.";
+            textoRespuesta =  "La categoria ha sido creada con éxito.";
+            System.out.println("Anda entrando aca");
 
-        }else {
-
-            this.categoriaRepository.save(categoria);
-            textoRespuesta = "La categoria ha sido creada con éxito.";
+        } else {
+            if (tipoSexo == null) {
+                textoRespuesta = "El tipo de sexo no puede estar vacio";
+            } else if (tipoRopa == null || tipoRopa.isBlank()) {
+                textoRespuesta = "El tipo de ropa no puede estar vacia o ser nula";
+            } else {
+                this.categoriaRepository.save(categoria);
+                textoRespuesta = "La categoria ha sido creado con éxito.";
+            }
         }
-
         return textoRespuesta;
     }
 
@@ -69,22 +82,29 @@ public class CategoriaServiceImp implements ICategoriaService{
         String textoRespuesta = "";
 
         // Verificamos si existe para actualizar.
+        try {
+            Optional<CategoriaModel> categoriaEncontrada = this.categoriaRepository.findById(idCategoria);
 
-        Optional<CategoriaModel> categoriaEncontrada = this.categoriaRepository.findById(idCategoria);
+            if (categoriaEncontrada.isPresent()) {
 
-        if(categoriaEncontrada.isPresent()){
+                CategoriaModel categoriaActualizar = categoriaEncontrada.get();
 
-            CategoriaModel categoriaActualizar = categoriaEncontrada.get();
+                BeanUtils.copyProperties(categoria, categoriaActualizar);
 
-            BeanUtils.copyProperties(categoria, categoriaActualizar);
+                this.categoriaRepository.save(categoriaActualizar);
 
-            this.categoriaRepository.save(categoriaActualizar);
+                return "La categoria con código: " + idCategoria + ", Ha sido actualizada con éxito.";
 
-            return "La categoria con ID: " + idCategoria + ", Ha sido actualizado con éxito.";
+            } else {
 
-        }else{
-
-            textoRespuesta = "La categoria con ID: "+ idCategoria + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+                textoRespuesta = "La categoria con código: " + idCategoria + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+            }
+        }catch(NullPointerException e){
+            textoRespuesta = "Alguno de los valores son nulos, verifique los campos";
+        }catch(UncheckedIOException e){
+            textoRespuesta = "Se presento un error, inesperado. Verifique el JSON y los valores no puede ser nulos.";
+        }catch(DataIntegrityViolationException e){
+            textoRespuesta = "Un error en el JSON, verifique.";
         }
 
         return textoRespuesta;

@@ -1,13 +1,19 @@
 package com.ecommerce.Service;
 
+import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.DisenioModel;
+import com.ecommerce.Model.Enums.Estado;
+import com.ecommerce.Model.PersonalizacionModel;
+import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Repository.IDisenioRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,27 +40,29 @@ public class DisenioServiceImp implements IDisenioService{
 
         String textoRespuesta = "";
 
+        UsuarioModel idUsuario = diseno.getIdUsuario();
+        Estado estado = diseno.getEstado();
+        PersonalizacionModel idPersonalizacion = diseno.getIdPersonalizacion();
+
         diseniosExistentes = this.disenioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
         if(diseniosExistentes.isEmpty()){
 
             this.disenioRepository.save(diseno);
 
-            textoRespuesta =  "El disenio ha sido creado con éxito";
+            textoRespuesta =  "El diseño ha sido creado con éxito.";
+            System.out.println("Anda entrando aca");
 
-        }else {
-            // Verificamos si el articulo existe (Para evitar duplicados)
-            for (DisenioModel i : diseniosExistentes) {
-                if (diseno.getIdDisenio().equals(i.getIdDisenio())) {
-
-                    textoRespuesta = "El diseño con ID: " + diseno.getIdDisenio() + ", Ya se encuentra creado.";
-                    // No es necesario continuar verificando una vez que se encuentra un área existente
-                } else {
-
-                    this.disenioRepository.save(diseno);
-
-                    textoRespuesta = "El disenio ha sido creado con éxito";
-                }
+        } else {
+            if (idUsuario == null) {
+                textoRespuesta = "El id del usuario no puede ser nulo";
+            } else if (estado == null) {
+                textoRespuesta = "El estado no puede ser nulo";
+            } else if (idPersonalizacion == null) {
+                textoRespuesta = "El id de su personalizacion no puede estar vacia o ser nula";
+            } else {
+                this.disenioRepository.save(diseno);
+                textoRespuesta = "El diseño ha sido creado con éxito.";
             }
         }
         return textoRespuesta;
@@ -76,22 +84,29 @@ public class DisenioServiceImp implements IDisenioService{
         String textoRespuesta = "";
 
         // Verificamos si existe para actualizar.
+        try {
+            Optional<DisenioModel> disenoEncontrado = this.disenioRepository.findById(idDisenio);
 
-        Optional<DisenioModel> disenioEncontrado = this.disenioRepository.findById(idDisenio);
+            if (disenoEncontrado.isPresent()) {
 
-        if(disenioEncontrado.isPresent()){
+                DisenioModel disenioActualizar = disenoEncontrado.get();
 
-            DisenioModel disenioActualizar = disenioEncontrado.get();
+                BeanUtils.copyProperties(disenio, disenioActualizar);
 
-            BeanUtils.copyProperties(disenio, disenioActualizar);
+                this.disenioRepository.save(disenioActualizar);
 
-            this.disenioRepository.save(disenioActualizar);
+                return "El diseño con código: " + idDisenio + ", Ha sido actualizado con éxito.";
 
-            return "El diseño con id: " + idDisenio + ", Ha sido actualizado con exito.";
+            } else {
 
-        }else{
-
-            textoRespuesta = "El diseño con id: "+ idDisenio + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+                textoRespuesta = "El artículo con código: " + idDisenio + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+            }
+        }catch(NullPointerException e){
+            textoRespuesta = "Alguno de los valores son nulos, verifique los campos";
+        }catch(UncheckedIOException e){
+            textoRespuesta = "Se presento un error, inesperado. Verifique el JSON y los valores no puede ser nulos.";
+        }catch(DataIntegrityViolationException e){
+            textoRespuesta = "Un error en el JSON, verifique.";
         }
 
         return textoRespuesta;

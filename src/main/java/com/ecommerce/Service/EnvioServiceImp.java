@@ -1,13 +1,18 @@
 package com.ecommerce.Service;
 
+import com.ecommerce.Model.ArticuloModel;
+import com.ecommerce.Model.DepartamentoModel;
 import com.ecommerce.Model.EnvioModel;
+import com.ecommerce.Model.OrdenModel;
 import com.ecommerce.Repository.IEnvioRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,30 +39,37 @@ public class EnvioServiceImp implements IEnvioService{
 
         String textoRespuesta = "";
 
+        String tipoEntrega = envio.getTipoEntrega();
+        String direccion = envio.getDireccion();
+        OrdenModel idOrden = envio.getIdOrden();
+        DepartamentoModel idDepartmaneto = envio.getIdDepartamento();
+
+
         enviosExistentes = this.envioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
         if(enviosExistentes.isEmpty()){
 
             this.envioRepository.save(envio);
 
-            textoRespuesta =  "El usuario ha sido creado con éxito";
+            textoRespuesta =  "El envio ha sido creado con éxito.";
+            System.out.println("Anda entrando aca");
 
-        }else {
-            // Verificamos si el articulo existe (Para evitar duplicados)
-            for (EnvioModel i : enviosExistentes) {
-                if (envio.getIdEnvio().equals(i.getIdEnvio())) {
-
-                    textoRespuesta = "El envio con ID: " + envio.getIdEnvio() + ", Ya se encuentra creado.";
-                    // No es necesario continuar verificando una vez que se encuentra un área existente
-                } else {
-
-                    this.envioRepository.save(envio);
-                    textoRespuesta = "El envio ha sido creado con éxito";
-                }
+        } else {
+            if (tipoEntrega == null || tipoEntrega.isBlank()) {
+                textoRespuesta = "el tipo de entrega no puede ser vacio a nula";
+            } else if (direccion == null || direccion.isBlank()) {
+                textoRespuesta = "La direccion no puede estar vacia o ser nula";
+            } else if (idOrden == null) {
+                textoRespuesta = "El id de su orden no puede ser nula";
+            } else if (idDepartmaneto == null) {
+                textoRespuesta = "El id de su departamento no puede ser nulo";
+            } else {
+                this.envioRepository.save(envio);
+                textoRespuesta = "El envio ha sido creado con éxito.";
             }
         }
         return textoRespuesta;
-    }
+  }
 
     @Override
     public List<EnvioModel> listarEnvio() {
@@ -75,22 +87,29 @@ public class EnvioServiceImp implements IEnvioService{
         String textoRespuesta = "";
 
         // Verificamos si existe para actualizar.
+        try {
+            Optional<EnvioModel> envioEncontrado = this.envioRepository.findById(idEnvio);
 
-        Optional<EnvioModel> envioEncontrado = this.envioRepository.findById(idEnvio);
+            if (envioEncontrado.isPresent()) {
 
-        if(envioEncontrado.isPresent()){
+                EnvioModel envioActualizar = envioEncontrado.get();
 
-            EnvioModel envioActualizar = envioEncontrado.get();
+                BeanUtils.copyProperties(envio, envioActualizar);
 
-            BeanUtils.copyProperties(envio, envioActualizar);
+                this.envioRepository.save(envioActualizar);
 
-            this.envioRepository.save(envioActualizar);
+                return "El envio con código: " + idEnvio + ", Ha sido actualizado con éxito.";
 
-            return "El envio con id: " + idEnvio + ", Ha sido actualizado con exito.";
+            } else {
 
-        }else{
-
-            textoRespuesta = "El envio con id: "+ idEnvio + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+                textoRespuesta = "El envio con código: " + idEnvio + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+            }
+        }catch(NullPointerException e){
+            textoRespuesta = "Alguno de los valores son nulos, verifique los campos";
+        }catch(UncheckedIOException e){
+            textoRespuesta = "Se presento un error, inesperado. Verifique el JSON y los valores no puede ser nulos.";
+        }catch(DataIntegrityViolationException e){
+            textoRespuesta = "Un error en el JSON, verifique.";
         }
 
         return textoRespuesta;

@@ -1,13 +1,17 @@
 package com.ecommerce.Service;
 
+import com.ecommerce.Model.ArticuloModel;
+import com.ecommerce.Model.CiudadModel;
 import com.ecommerce.Model.DepartamentoModel;
 import com.ecommerce.Repository.IDepartamentoRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +37,10 @@ public class DepartamentoServiceImp implements IDepartamentoService{
 
         String textoRespuesta = "";
 
+        String nombre = departamento.getNombre();
+        CiudadModel idCiudad = departamento.getIdCiudad();
+
+
         departamentosExistentes = this.departamentoRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
         if(departamentosExistentes.isEmpty()){
@@ -40,20 +48,17 @@ public class DepartamentoServiceImp implements IDepartamentoService{
             this.departamentoRepository.save(departamento);
 
             textoRespuesta =  "El departamento ha sido creado con éxito.";
+            System.out.println("Anda entrando aca");
 
-        }else {
-            // Verificamos si el articulo existe (Para evitar duplicados)
-            for (DepartamentoModel i : departamentosExistentes) {
-                if (departamento.getIdDepartamento().equals(i.getIdDepartamento())) {
-
-                    textoRespuesta = "El departamento con ID: " + departamento.getIdDepartamento() + ", Ya se encuentra creado.";
-                    // No es necesario continuar verificando una vez que se encuentra un área existente
-                } else {
-
-                    this.departamentoRepository.save(departamento);
-
-                    textoRespuesta = "El departamento ha sido creado con éxito.";
-                }
+        } else {
+            if (nombre == null || nombre.isBlank()) {
+                textoRespuesta = "El nombre de departamneto no puede estar vacia o ser nula";
+            }else if(idCiudad == null){
+                textoRespuesta = "el id de la ciudad no puede ser nulo";
+            }
+            else {
+                this.departamentoRepository.save(departamento);
+                textoRespuesta = "El departamneto ha sido creado con éxito.";
             }
         }
         return textoRespuesta;
@@ -75,22 +80,29 @@ public class DepartamentoServiceImp implements IDepartamentoService{
         String textoRespuesta = "";
 
         // Verificamos si existe para actualizar.
+        try {
+            Optional<DepartamentoModel> departamentoEncontrado = this.departamentoRepository.findById(idDepartamento);
 
-        Optional<DepartamentoModel> departamentoEncontrado = this.departamentoRepository.findById(idDepartamento);
+            if (departamentoEncontrado.isPresent()) {
 
-        if(departamentoEncontrado.isPresent()){
+                DepartamentoModel departamentoActualizar = departamentoEncontrado.get();
 
-            DepartamentoModel departamentoActualizar = departamentoEncontrado.get();
+                BeanUtils.copyProperties(departamento, departamentoActualizar);
 
-            BeanUtils.copyProperties(departamento, departamentoActualizar);
+                this.departamentoRepository.save(departamentoActualizar);
 
-            this.departamentoRepository.save(departamentoActualizar);
+                return "El departamento con código: " + idDepartamento + ", Ha sido actualizado con éxito.";
 
-            return "El departamento con id: " + idDepartamento + ", Ha sido actualizado con éxito.";
+            } else {
 
-        }else{
-
-            textoRespuesta = "El departamento con id: "+ idDepartamento + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+                textoRespuesta = "El departamneto con código: " + idDepartamento + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+            }
+        }catch(NullPointerException e){
+            textoRespuesta = "Alguno de los valores son nulos, verifique los campos";
+        }catch(UncheckedIOException e){
+            textoRespuesta = "Se presento un error, inesperado. Verifique el JSON y los valores no puede ser nulos.";
+        }catch(DataIntegrityViolationException e){
+            textoRespuesta = "Un error en el JSON, verifique.";
         }
 
         return textoRespuesta;

@@ -67,7 +67,7 @@ public class ArticuloServiceImp implements IArticuloService {
                 textoRespuesta = "El campo de personalizable no puede estar vacio o ser nula";
             } else {
                 this.ArticuloRepository.save(articulo);
-                textoRespuesta = "El  ha sido creado con éxito.";
+                textoRespuesta = "El articulo ha sido creado con éxito.";
             }
         }
         return textoRespuesta;

@@ -1,6 +1,7 @@
 package com.ecommerce.Service;
 
 import com.ecommerce.Model.ComentarioModel;
+import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Repository.IComentarioRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,27 +35,30 @@ public class ComentarioServiceImp implements IComentarioService {
 
         String textoRespuesta = "";
 
-        comentariosExistentes = this.comentarioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
+        String descripcion = comentario.getDescripcion();
+        Date fecha = comentario.getFecha();
+        UsuarioModel idUsuario = comentario.getIdUsuario();
+
+
+         comentariosExistentes = this.comentarioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
         if(comentariosExistentes.isEmpty()){
 
             this.comentarioRepository.save(comentario);
 
-            textoRespuesta =  "El comentario ha sido creado con éxito";
+            textoRespuesta =  "El comentario ha sido creado con éxito.";
+            System.out.println("Anda entrando aca");
 
-        }else {
-            // Verificamos si el articulo existe (Para evitar duplicados)
-            for (ComentarioModel i : comentariosExistentes) {
-                if (comentario.getIdComentario().equals(i.getIdComentario())) {
-
-                    textoRespuesta = "El comentario con ID: " + comentario.getIdComentario() + ", Ya se encuentra creado.";
-                    // No es necesario continuar verificando una vez que se encuentra un área existente
-                } else {
-
-                    this.comentarioRepository.save(comentario);
-
-                    textoRespuesta = "El comentario ha sido creado con éxito";
-                }
+        } else {
+            if (descripcion == null || descripcion.isBlank()) {
+                textoRespuesta = "La descripcion no puede estar vacia o ser nula";
+            } else if (fecha == null ) {
+                textoRespuesta = "La fecha no puede estar vacia o ser nula";
+            } else if (idUsuario == null ) {
+                textoRespuesta = "el id de su usuario no puede estar vacio";
+            } else {
+                this.comentarioRepository.save(comentario);
+                textoRespuesta = "El comentario ha sido creado con exito";
             }
         }
         return textoRespuesta;

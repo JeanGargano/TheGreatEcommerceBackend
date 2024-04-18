@@ -2,14 +2,18 @@ package com.ecommerce.Service;
 
 
 
+import com.ecommerce.Model.ArticuloModel;
+import com.ecommerce.Model.CategoriaModel;
 import com.ecommerce.Model.CiudadModel;
 import com.ecommerce.Repository.ICiudadRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,32 +45,26 @@ public class CiudadServiceImp implements ICiudadService {
 
         String textoRespuesta = "";
 
+        String nombre = ciudad.getNombre();
+
+
         CiudadesExistentes = this.ciudadRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
         if(CiudadesExistentes.isEmpty()){
 
             this.ciudadRepository.save(ciudad);
 
-            textoRespuesta = "La ciudad ha sido creada con éxito.";
+            textoRespuesta =  "La ciudad ha sido creado con éxito.";
+            System.out.println("Anda entrando aca");
 
-        }else {
-
-
-            // Verificamos si el articulo existe (Para evitar duplicados)
-            for (CiudadModel i : CiudadesExistentes) {
-                if (ciudad.getIdCiudad().equals(i.getIdCiudad())) {
-
-                    textoRespuesta = "La Ciudad con ID: " + ciudad.getIdCiudad() + ", Ya se encuentra creada.";
-                    // No es necesario continuar verificando una vez que se encuentra un área existente
-                } else {
-
-                    this.ciudadRepository.save(ciudad);
-
-                    textoRespuesta = "La ciudad ha sido creada con éxito.";
-                }
+        } else {
+            if (nombre == null || nombre.isBlank()) {
+                textoRespuesta = "El nombre de la ciudad no puede estar vacio o ser nulo";
+            } else {
+                this.ciudadRepository.save(ciudad);
+                textoRespuesta = "La ciudad ha sido creado con éxito.";
             }
         }
-
         return textoRespuesta;
     }
 
@@ -88,27 +86,33 @@ public class CiudadServiceImp implements ICiudadService {
         String textoRespuesta = "";
 
         // Verificamos si existe para actualizar.
+        try {
+            Optional<CiudadModel> ciudadEncontrada = this.ciudadRepository.findById(idCiudad);
 
-        Optional<CiudadModel> ciudadEncontrada = this.ciudadRepository.findById(idCiudad);
+            if (ciudadEncontrada.isPresent()) {
 
-        if(ciudadEncontrada.isPresent()){
+                CiudadModel ciudadActualizar = ciudadEncontrada.get();
 
-            CiudadModel ciudadActualizar = ciudadEncontrada.get();
+                BeanUtils.copyProperties(ciudad, ciudadActualizar);
 
-            BeanUtils.copyProperties(ciudad, ciudadActualizar);
+                this.ciudadRepository.save(ciudadActualizar);
 
-            this.ciudadRepository.save(ciudadActualizar);
+                return "La ciudad con código: " + idCiudad + ", Ha sido actualizado con éxito.";
 
-            return "La ciudad con ID: " + idCiudad + ", Ha sido actualizado con éxito.";
+            } else {
 
-        }else{
-
-            textoRespuesta = "La ciudad con ID: "+ idCiudad + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+                textoRespuesta = "La ciudad con código: " + idCiudad + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+            }
+        }catch(NullPointerException e){
+            textoRespuesta = "Alguno de los valores son nulos, verifique los campos";
+        }catch(UncheckedIOException e){
+            textoRespuesta = "Se presento un error, inesperado. Verifique el JSON y los valores no puede ser nulos.";
+        }catch(DataIntegrityViolationException e){
+            textoRespuesta = "Un error en el JSON, verifique.";
         }
 
         return textoRespuesta;
     }
-
 
 
 
