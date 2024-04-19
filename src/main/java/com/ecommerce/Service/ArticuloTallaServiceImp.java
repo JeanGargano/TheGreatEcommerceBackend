@@ -70,7 +70,7 @@ public class ArticuloTallaServiceImp implements IArticuloTallaService{
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
-            textoRespuesta += "El id que proporciona en alguna clase aun no ha sido creado\n";
+            textoRespuesta += "Verifique si el articulo o la categoria ya se encunetran en la base de datos\n";
         }
 
         return textoRespuesta;

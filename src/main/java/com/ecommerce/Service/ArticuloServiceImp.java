@@ -1,8 +1,11 @@
 package com.ecommerce.Service;
 
 import com.ecommerce.Model.ArticuloModel;
+import com.ecommerce.Model.CategoriaModel;
+import com.ecommerce.Model.TallaModel;
 import com.ecommerce.Repository.IArticuloRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -35,40 +38,54 @@ public class ArticuloServiceImp implements IArticuloService {
     public String crearArticulo(ArticuloModel articulo) {
 
         String textoRespuesta = "";
+        try {
+            String imagen = articulo.getImagen();
+            String descripcion = articulo.getDescripcion();
+            String nombre = articulo.getNombre();
+            Integer precio = articulo.getPrecio();
+            CategoriaModel categoria = articulo.getIdCategoria();
+            Boolean personalizable = articulo.getEsPersonalizable();
 
-        String urlImagen = articulo.getImagen();
-        String descripcion = articulo.getDescripcion();
-        String nombreArticulo = articulo.getNombre();
-        Integer costo = articulo.getPrecio();
-        Integer idCategoria = articulo.getIdCategoria().getIdCategoria();
-        Boolean esPersonalizable = articulo.getEsPersonalizable();
+            ArticulosExistentes = this.ArticuloRepository.findAll();
 
-        ArticulosExistentes = this.ArticuloRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
-
-        if(ArticulosExistentes.isEmpty()){
-
-            this.ArticuloRepository.save(articulo);
-
-            textoRespuesta =  "El artículo ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (urlImagen == null || urlImagen.isBlank()) {
-                textoRespuesta = "La URL imagén no puede estar vacia o ser nula";
-            } else if (descripcion == null || descripcion.isBlank()) {
-                textoRespuesta = "La descripción no puede estar vacia o ser nula";
-            } else if (nombreArticulo == null || nombreArticulo.isBlank()) {
-                textoRespuesta = "El nombre del artículo no puede estar vacia o ser nula";
-            } else if (costo == null) {
-                textoRespuesta = "El precio no puede ser nulo";
-            } else if (idCategoria == null) {
-                textoRespuesta = "La id de la categoria no puede estar vacia o nula";
-            } else if (esPersonalizable == null) {
-                textoRespuesta = "El campo de personalizable no puede estar vacio o ser nula";
-            } else {
+            if (ArticulosExistentes.isEmpty()) {
                 this.ArticuloRepository.save(articulo);
-                textoRespuesta = "El articulo ha sido creado con éxito.";
+                textoRespuesta = "El artículo ha sido creado con éxito.";
+            } else {
+                if (imagen == null || imagen.isBlank()) {
+                    textoRespuesta += "La imagen no puede ser nula o estar vacia\n";
+                }
+                if (descripcion == null || descripcion.isBlank()) {
+                    textoRespuesta += "La descripcion no puede ser nula o estar vacia\n";
+                }
+                if (nombre == null || nombre.isBlank()) {
+                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+                }
+                if (precio == null) {
+                    textoRespuesta += "El precio no puede estar vacio\n";
+
+                }
+                if (nombre == null || nombre.isBlank()) {
+                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+                }
+                if (categoria == null) {
+                    textoRespuesta += "La categoria no puede ser nula.\n";
+                }if (personalizable == null) {
+                    textoRespuesta += "El campo es personalizable no puede ser nulo.\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+                } else {
+                    this.ArticuloRepository.save(articulo);
+                    textoRespuesta = "El artículo ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Algún objeto es nulo\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "verifique si la categoria ya se encuentra en la base de datos\n";
         }
         return textoRespuesta;
     }
