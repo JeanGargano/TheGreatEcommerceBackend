@@ -1,5 +1,6 @@
 package com.ecommerce.Service;
 
+import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.OrdenPersonalizacionModel;
 import com.ecommerce.Model.TelefonoUsuarioModel;
 import com.ecommerce.Model.UsuarioModel;
@@ -8,8 +9,10 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,27 +39,27 @@ public class TelefonoUsuarioServiceImp implements ITelefonoUsuarioService {
 
         String textoRespuesta = "";
 
+        UsuarioModel idUsuario = telefonoUsuario.getIdUsuario();
+        Integer telefono = telefonoUsuario.getTelefono();
+
+
         telefonoUsuariosExistentes = this.telefonoUsuarioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
         if(telefonoUsuariosExistentes.isEmpty()){
 
             this.telefonoUsuarioRepository.save(telefonoUsuario);
 
-            textoRespuesta =  "El telefono del usuario ha sido creado con éxito";
+            textoRespuesta =  "El telefono del usuario ha sido creado con éxito.";
+            System.out.println("Anda entrando aca");
 
-        }else {
-            // Verificamos si el articulo existe (Para evitar duplicados)
-            for (TelefonoUsuarioModel i : telefonoUsuariosExistentes) {
-                if (telefonoUsuario.getIdTelefonoUsuario().equals(i.getIdTelefonoUsuario())) {
-
-                    textoRespuesta = "El telefono del usuario con ID: " + telefonoUsuario.getIdUsuario() + ", Ya se encuentra creada.";
-                    // No es necesario continuar verificando una vez que se encuentra un área existente
-                } else {
-
-                    this.telefonoUsuarioRepository.save(telefonoUsuario);
-
-                    textoRespuesta = "El telefono del usuario ha sido creado con éxito";
-                }
+        } else {
+            if (idUsuario == null) {
+                textoRespuesta = "El id de su usuario no puede ser null.";
+            } else if (telefono == null) {
+                textoRespuesta = "El telefono no puede estar vacia o ser nulo";
+            } else {
+                this.telefonoUsuarioRepository.save(telefonoUsuario);
+                textoRespuesta = "El telefono ha sido creado con éxito.";
             }
         }
         return textoRespuesta;
@@ -78,22 +81,29 @@ public class TelefonoUsuarioServiceImp implements ITelefonoUsuarioService {
         String textoRespuesta = "";
 
         // Verificamos si existe para actualizar.
+        try {
+            Optional<TelefonoUsuarioModel> telefonoUsuarioEncontrado = this.telefonoUsuarioRepository.findById(idTelefonoUsuario);
 
-        Optional<TelefonoUsuarioModel> telefonoUsuarioEncontrado = this.telefonoUsuarioRepository.findById(idTelefonoUsuario);
+            if (telefonoUsuarioEncontrado.isPresent()) {
 
-        if(telefonoUsuarioEncontrado.isPresent()){
+                TelefonoUsuarioModel telefonoUsuarioActualizar = telefonoUsuarioEncontrado.get();
 
-            TelefonoUsuarioModel telefonoUsuarioActualizzar = telefonoUsuarioEncontrado.get();
+                BeanUtils.copyProperties(telefonoUsuario, telefonoUsuarioActualizar);
 
-            BeanUtils.copyProperties(telefonoUsuario, telefonoUsuarioActualizzar);
+                this.telefonoUsuarioRepository.save(telefonoUsuarioActualizar);
 
-            this.telefonoUsuarioRepository.save(telefonoUsuario);
+                return "El telefono con código: " + idTelefonoUsuario + ", Ha sido actualizado con éxito.";
 
-            return "El telefono delusuario con id: " + telefonoUsuario.getTelefono() + ", Ha sido actualizada con exito.";
+            } else {
 
-        }else{
-
-            textoRespuesta = "El telefono del usuario con id: "+ telefonoUsuario.getIdUsuario() + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+                textoRespuesta = "El telefono con código: " + idTelefonoUsuario + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+            }
+        }catch(NullPointerException e){
+            textoRespuesta = "Alguno de los valores son nulos, verifique los campos";
+        }catch(UncheckedIOException e){
+            textoRespuesta = "Se presento un error, inesperado. Verifique el JSON y los valores no puede ser nulos.";
+        }catch(DataIntegrityViolationException e){
+            textoRespuesta = "Un error en el JSON, verifique.";
         }
 
         return textoRespuesta;

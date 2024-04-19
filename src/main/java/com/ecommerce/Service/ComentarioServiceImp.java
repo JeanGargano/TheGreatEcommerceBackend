@@ -36,7 +36,7 @@ public class ComentarioServiceImp implements IComentarioService {
         String textoRespuesta = "";
 
         String descripcion = comentario.getDescripcion();
-        Date fecha = comentario.getFecha();
+        String fecha = comentario.getFecha();
         UsuarioModel idUsuario = comentario.getIdUsuario();
 
 
@@ -52,7 +52,7 @@ public class ComentarioServiceImp implements IComentarioService {
         } else {
             if (descripcion == null || descripcion.isBlank()) {
                 textoRespuesta = "La descripcion no puede estar vacia o ser nula";
-            } else if (fecha == null ) {
+            } else if (fecha == null || fecha.isBlank() ) {
                 textoRespuesta = "La fecha no puede estar vacia o ser nula";
             } else if (idUsuario == null ) {
                 textoRespuesta = "el id de su usuario no puede estar vacio";

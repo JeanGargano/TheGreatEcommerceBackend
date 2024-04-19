@@ -35,40 +35,44 @@ public class ArticuloTallaServiceImp implements IArticuloTallaService{
         ArticulosTallaExistentes = this.ArticuloTallaRepository.findAll(); // Aca toma todas los articulos de la BD y las mete en el List.
 
     }
-    public String crearArticuloTalla(ArticuloTallaModel articuloTalla){
-
-
-
+    public String crearArticuloTalla(ArticuloTallaModel articuloTalla) {
         String textoRespuesta = "";
 
-        Integer cantidad = articuloTalla.getCantidad();
-        TallaModel idTalla = articuloTalla.getIdTalla();
-        ArticuloModel idArticulo = articuloTalla.getIdArticulo();
+        try {
+            Integer cantidad = articuloTalla.getCantidad();
+            TallaModel idTalla = articuloTalla.getIdTalla();
+            ArticuloModel idArticulo = articuloTalla.getIdArticulo();
 
+            ArticulosTallaExistentes = this.ArticuloTallaRepository.findAll();
 
-        ArticulosTallaExistentes = this.ArticuloTallaRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
-
-        if(ArticulosTallaExistentes.isEmpty()){
-
-            this.ArticuloTallaRepository.save(articuloTalla);
-
-            textoRespuesta =  "El articulo talla ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (cantidad == null) {
-                textoRespuesta = "La cantidad no puede ser nula";
-            }else if(idTalla == null){
-                textoRespuesta = "el id de su talla no puede ser nula";
-                }
-            else if(idArticulo == null){
-            textoRespuesta = "el id de su articulo no puede ser nulo";
-        }
-             else {
+            if (ArticulosTallaExistentes.isEmpty()) {
                 this.ArticuloTallaRepository.save(articuloTalla);
-                textoRespuesta = "El articulo talla ha sido creado con éxito.";
+                textoRespuesta = "El artículo talla ha sido creado con éxito.";
+            } else {
+                if (cantidad == null) {
+                    textoRespuesta += "La cantidad no puede ser nula\n";
+                }
+                if (idTalla == null) {
+                    textoRespuesta += "El ID de la talla no puede ser nulo\n";
+                }
+                if (idArticulo == null) {
+                    textoRespuesta += "El ID del artículo no puede ser nulo\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+                } else {
+                    this.ArticuloTallaRepository.save(articuloTalla);
+                    textoRespuesta = "El artículo talla ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Algún objeto es nulo\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "El id que proporciona en alguna clase aun no ha sido creado\n";
         }
+
         return textoRespuesta;
     }
 

@@ -1,14 +1,18 @@
 package com.ecommerce.Service;
 
 
+import com.ecommerce.Model.ArticuloModel;
+import com.ecommerce.Model.Enums.TipoSexo;
 import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Repository.IUsuarioRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,21 +37,44 @@ public class UsuarioServiceImp implements IUsuarioService {
     public String crearUsuario(UsuarioModel usuario) {
         String textoRespuesta = "";
 
+        String nombre = usuario.getNombre();
+        Integer telefono = usuario.getTelefono();
+        String correo = usuario.getCorreo();
+        String direccion = usuario.getDireccion();
+        TipoSexo sexo = usuario.getSexo();
+        Integer identificacion = usuario.getIdentificacion();
+
+
         usuariosExistentes = this.usuarioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
         if(usuariosExistentes.isEmpty()){
 
             this.usuarioRepository.save(usuario);
 
-            textoRespuesta =  "El Usuario ha sido creado con éxito.";
+            textoRespuesta =  "El usuario ha sido creado con éxito.";
             System.out.println("Anda entrando aca");
 
         } else {
-            this.usuarioRepository.save(usuario);
-            textoRespuesta = "El usuario ha sido creado con éxito.";
+            if (nombre == null || nombre.isBlank()) {
+                textoRespuesta = "El nombre no puede estar vacia o ser nula";
+            } else if (telefono == null ) {
+                textoRespuesta = "El telefono no puede estar vacia o ser nula";
+            } else if (correo == null || correo.isBlank()) {
+                textoRespuesta = "El correo no puede estar vacia o ser nula";
+            } else if (direccion == null) {
+                textoRespuesta = "La direccion no puede estar vacia o ser nula";
+            } else if (sexo == null) {
+                textoRespuesta = "El sexo no puede estar vacia o ser nulo";
+            } else if (identificacion == null) {
+                textoRespuesta = "La identificacion no puede estar vacia o ser nulo";
+            } else {
+                this.usuarioRepository.save(usuario);
+                textoRespuesta = "El usuario ha sido creado con exito";
+            }
         }
         return textoRespuesta;
     }
+
 
 
     @Override
@@ -66,22 +93,29 @@ public class UsuarioServiceImp implements IUsuarioService {
         String textoRespuesta = "";
 
         // Verificamos si existe para actualizar.
+        try {
+            Optional<UsuarioModel> usuarioEncontrado = this.usuarioRepository.findById(idUsuario);
 
-        Optional<UsuarioModel> usuarioEncontrado = this.usuarioRepository.findById(idUsuario);
+            if (usuarioEncontrado.isPresent()) {
 
-        if(usuarioEncontrado.isPresent()){
+                UsuarioModel usuarioActualizar = usuarioEncontrado.get();
 
-            UsuarioModel usuarioActualizar = usuarioEncontrado.get();
+                BeanUtils.copyProperties(usuario, usuarioActualizar);
 
-            BeanUtils.copyProperties(usuario, usuarioActualizar);
+                this.usuarioRepository.save(usuarioActualizar);
 
-            this.usuarioRepository.save(usuarioActualizar);
+                return "El usuario con código: " + idUsuario + ", Ha sido actualizado con éxito.";
 
-            return "El usuario con id: " + idUsuario + ", Ha sido actualizada con exito.";
+            } else {
 
-        }else{
-
-            textoRespuesta = "El usuario con id: "+ idUsuario + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+                textoRespuesta = "El usuario con código: " + idUsuario + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+            }
+        }catch(NullPointerException e){
+            textoRespuesta = "Alguno de los valores son nulos, verifique los campos";
+        }catch(UncheckedIOException e){
+            textoRespuesta = "Se presento un error, inesperado. Verifique el JSON y los valores no puede ser nulos.";
+        }catch(DataIntegrityViolationException e){
+            textoRespuesta = "Un error en el JSON, verifique.";
         }
 
         return textoRespuesta;

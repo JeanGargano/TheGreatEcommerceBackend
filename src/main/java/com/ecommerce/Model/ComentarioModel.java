@@ -19,7 +19,7 @@ public class ComentarioModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idComentario;
     private String descripcion;
-    private Date fecha;
+    private String fecha;
 
     @ManyToOne
     @JoinColumn(name = "idUsuario")

@@ -1,14 +1,15 @@
 package com.ecommerce.Service;
 
-import com.ecommerce.Model.OrdenModel;
-import com.ecommerce.Model.PersonalizacionModel;
+import com.ecommerce.Model.*;
 import com.ecommerce.Repository.IPersonalizacionRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,27 +36,30 @@ public class PersonalizacionServiceimp implements IPersonalizacionService {
     public String crearPersonalizacion(PersonalizacionModel personalizacion) {
         String textoRespuesta = "";
 
+        UsuarioModel idUsuario = personalizacion.getIdUsuario();
+        ArticuloModel idArticulo = personalizacion.getIdArticulo();
+        ComentarioModel idComentario = personalizacion.getIdComentario();
+
+
         personalizacionesExistentes = this.personalizacionRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
         if(personalizacionesExistentes.isEmpty()){
 
             this.personalizacionRepository.save(personalizacion);
 
-            textoRespuesta =  "La personalizacion ha sido creada con exito";
+            textoRespuesta =  "La personalizacion ha sido creado con éxito.";
+            System.out.println("Anda entrando aca");
 
-        }else {
-            // Verificamos si el articulo existe (Para evitar duplicados)
-            for (PersonalizacionModel i : personalizacionesExistentes) {
-                if (personalizacion.getIdPersonalizacion().equals(i.getIdPersonalizacion())) {
-
-                    textoRespuesta = "La personalizacion con ID: " + personalizacion.getIdPersonalizacion() + ", Ya se encuentra creada.";
-                    // No es necesario continuar verificando una vez que se encuentra un área existente
-                } else {
-
-                    this.personalizacionRepository.save(personalizacion);
-
-                    textoRespuesta = "La personalizacion ha sido creada con exito";
-                }
+        } else {
+            if (idUsuario == null ) {
+                textoRespuesta = "el id de su personalizacion no puede ser null.";
+            } else if (idArticulo == null) {
+                textoRespuesta = "El id de su articulo no puede ser null.";
+            } else if (idComentario == null) {
+                textoRespuesta = "El id de su comentario no puede ser null.";
+            } else {
+                this.personalizacionRepository.save(personalizacion);
+                textoRespuesta = "La personalizacion ha sido creada con exito";
             }
         }
         return textoRespuesta;
@@ -77,22 +81,29 @@ public class PersonalizacionServiceimp implements IPersonalizacionService {
         String textoRespuesta = "";
 
         // Verificamos si existe para actualizar.
+        try {
+            Optional<PersonalizacionModel> personalizacionEncontrada = this.personalizacionRepository.findById(idPersonalizacion);
 
-        Optional<PersonalizacionModel> personalizacionEncontrada = this.personalizacionRepository.findById(idPersonalizacion);
+            if (personalizacionEncontrada.isPresent()) {
 
-        if(personalizacionEncontrada.isPresent()){
+                PersonalizacionModel personalizacionActualizar = personalizacionEncontrada.get();
 
-            PersonalizacionModel personalizacionActualizar = personalizacionEncontrada.get();
+                BeanUtils.copyProperties(personalizacion, personalizacionActualizar);
 
-            BeanUtils.copyProperties(personalizacion, personalizacionActualizar);
+                this.personalizacionRepository.save(personalizacionActualizar);
 
-            this.personalizacionRepository.save(personalizacionActualizar);
+                return "La personalizacion con código: " + idPersonalizacion + ", Ha sido actualizado con éxito.";
 
-            return "La personalizacion con id: " + idPersonalizacion + ", Ha sido actualizada con exito.";
+            } else {
 
-        }else{
-
-            textoRespuesta = "La personalizacion con id: "+ idPersonalizacion + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+                textoRespuesta = "La personalizacion con código: " + idPersonalizacion + ", No existe en el sistema. Por ende el proceso no se realizo correctamente.";
+            }
+        }catch(NullPointerException e){
+            textoRespuesta = "Alguno de los valores son nulos, verifique los campos";
+        }catch(UncheckedIOException e){
+            textoRespuesta = "Se presento un error, inesperado. Verifique el JSON y los valores no puede ser nulos.";
+        }catch(DataIntegrityViolationException e){
+            textoRespuesta = "Un error en el JSON, verifique.";
         }
 
         return textoRespuesta;
