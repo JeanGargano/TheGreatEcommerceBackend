@@ -36,32 +36,41 @@ public class PersonalizacionServiceimp implements IPersonalizacionService {
     public String crearPersonalizacion(PersonalizacionModel personalizacion) {
         String textoRespuesta = "";
 
-        UsuarioModel idUsuario = personalizacion.getIdUsuario();
-        ArticuloModel idArticulo = personalizacion.getIdArticulo();
-        ComentarioModel idComentario = personalizacion.getIdComentario();
+        try {
+            UsuarioModel idUsuario = personalizacion.getIdUsuario();
+            ArticuloModel idArticulo = personalizacion.getIdArticulo();
+            ComentarioModel idComentario = personalizacion.getIdComentario();
 
+            personalizacionesExistentes = this.personalizacionRepository.findAll();
 
-        personalizacionesExistentes = this.personalizacionRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
-
-        if(personalizacionesExistentes.isEmpty()){
-
-            this.personalizacionRepository.save(personalizacion);
-
-            textoRespuesta =  "La personalizacion ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (idUsuario == null ) {
-                textoRespuesta = "el id de su personalizacion no puede ser null.";
-            } else if (idArticulo == null) {
-                textoRespuesta = "El id de su articulo no puede ser null.";
-            } else if (idComentario == null) {
-                textoRespuesta = "El id de su comentario no puede ser null.";
-            } else {
+            if (personalizacionesExistentes.isEmpty()) {
                 this.personalizacionRepository.save(personalizacion);
-                textoRespuesta = "La personalizacion ha sido creada con exito";
+                textoRespuesta = "la personalizacion ha sido creada con éxito.";
+            } else {
+                if (idUsuario == null) {
+                    textoRespuesta += "El id de su usario no puede ser nulo no puede ser nula\n";
+                }
+                if (idArticulo == null) {
+                    textoRespuesta += "El ID del articulo no puede ser nulo\n";
+                }
+                if (idComentario == null) {
+                    textoRespuesta += "El ID del comentario no puede ser nulo\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+                } else {
+                    this.personalizacionRepository.save(personalizacion);
+                    textoRespuesta = "La personalizacion ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Algún objeto es nulo\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "Verifique si el usuario, el articulo o el comentario ya se encunetran en la base de datos\n";
         }
+
         return textoRespuesta;
     }
 

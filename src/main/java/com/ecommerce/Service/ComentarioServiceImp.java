@@ -1,5 +1,6 @@
 package com.ecommerce.Service;
 
+import com.ecommerce.Model.CategoriaModel;
 import com.ecommerce.Model.ComentarioModel;
 import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Repository.IComentarioRepository;
@@ -7,8 +8,10 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.io.UncheckedIOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,32 +37,39 @@ public class ComentarioServiceImp implements IComentarioService {
     public String crearComentario(ComentarioModel comentario) {
 
         String textoRespuesta = "";
+        try {
+            String descripcion = comentario.getDescripcion();
+            String fecha = comentario.getFecha();
+            UsuarioModel idUsuario = comentario.getIdUsuario();
 
-        String descripcion = comentario.getDescripcion();
-        String fecha = comentario.getFecha();
-        UsuarioModel idUsuario = comentario.getIdUsuario();
+            comentariosExistentes = this.comentarioRepository.findAll();
 
-
-         comentariosExistentes = this.comentarioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
-
-        if(comentariosExistentes.isEmpty()){
-
-            this.comentarioRepository.save(comentario);
-
-            textoRespuesta =  "El comentario ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (descripcion == null || descripcion.isBlank()) {
-                textoRespuesta = "La descripcion no puede estar vacia o ser nula";
-            } else if (fecha == null || fecha.isBlank() ) {
-                textoRespuesta = "La fecha no puede estar vacia o ser nula";
-            } else if (idUsuario == null ) {
-                textoRespuesta = "el id de su usuario no puede estar vacio";
-            } else {
+            if (comentariosExistentes.isEmpty()) {
                 this.comentarioRepository.save(comentario);
-                textoRespuesta = "El comentario ha sido creado con exito";
+                textoRespuesta = "El comentario ha sido creado con éxito.";
+            } else {
+                if (descripcion == null || descripcion.isBlank()) {
+                    textoRespuesta += "La descripcion no puede estar vacia o ser null\n";
+                }
+                if (fecha == null || fecha.isBlank()) {
+                    textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
+                }
+                if (idUsuario == null) {
+                    textoRespuesta += "El id de su usuario no puede ser null\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+                } else {
+                    this.comentarioRepository.save(comentario);
+                    textoRespuesta = "El comentario ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Verifique bien los campos\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "verifique si el usuario ya se encuentra creado en la base de datos\n";
         }
         return textoRespuesta;
     }

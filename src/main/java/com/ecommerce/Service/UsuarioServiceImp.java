@@ -3,6 +3,8 @@ package com.ecommerce.Service;
 
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.Enums.TipoSexo;
+import com.ecommerce.Model.Enums.TipoUsuario;
+import com.ecommerce.Model.TallaModel;
 import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Repository.IUsuarioRepository;
 import jakarta.annotation.PostConstruct;
@@ -37,41 +39,58 @@ public class UsuarioServiceImp implements IUsuarioService {
     public String crearUsuario(UsuarioModel usuario) {
         String textoRespuesta = "";
 
-        String nombre = usuario.getNombre();
-        Integer telefono = usuario.getTelefono();
-        String correo = usuario.getCorreo();
-        String direccion = usuario.getDireccion();
-        TipoSexo sexo = usuario.getSexo();
-        Integer identificacion = usuario.getIdentificacion();
+        try {
+            String nombre = usuario.getNombre();
+            Integer telefono = usuario.getTelefono();
+            String correo = usuario.getCorreo();
+            String direccion = usuario.getDireccion();
+            TipoUsuario rol = usuario.getRol();
+            TipoSexo sexo = usuario.getSexo();
+            Integer identificacion = usuario.getIdentificacion();
 
 
-        usuariosExistentes = this.usuarioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
+            usuariosExistentes = this.usuarioRepository.findAll();
 
-        if(usuariosExistentes.isEmpty()){
-
-            this.usuarioRepository.save(usuario);
-
-            textoRespuesta =  "El usuario ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (nombre == null || nombre.isBlank()) {
-                textoRespuesta = "El nombre no puede estar vacia o ser nula";
-            } else if (telefono == null ) {
-                textoRespuesta = "El telefono no puede estar vacia o ser nula";
-            } else if (correo == null || correo.isBlank()) {
-                textoRespuesta = "El correo no puede estar vacia o ser nula";
-            } else if (direccion == null) {
-                textoRespuesta = "La direccion no puede estar vacia o ser nula";
-            } else if (sexo == null) {
-                textoRespuesta = "El sexo no puede estar vacia o ser nulo";
-            } else if (identificacion == null) {
-                textoRespuesta = "La identificacion no puede estar vacia o ser nulo";
-            } else {
+            if (usuariosExistentes.isEmpty()) {
                 this.usuarioRepository.save(usuario);
-                textoRespuesta = "El usuario ha sido creado con exito";
+                textoRespuesta = "El usuario ha sido creado con éxito.";
+            } else {
+                if (nombre == null || nombre.isBlank()) {
+                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+                }
+                if (telefono == null) {
+                    textoRespuesta += "El telefono no puede ser nulo\n";
+                }
+                if (correo == null || correo.isBlank()) {
+                    textoRespuesta += "El correo no puede ser nulo o estar vacio\n";
+                }
+                if (direccion == null || direccion.isBlank()) {
+                    textoRespuesta += "La direccion no puede ser nula o estar vacia\n";
+                }
+                if (rol == null ) {
+                    textoRespuesta += "El rol no puede ser null\n";
+                }
+                if (sexo == null ) {
+                    textoRespuesta += "El sexo no puede ser null\n";
+                }
+                if (identificacion == null ) {
+                    textoRespuesta += "La identificacion no puede ser null\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+                } else {
+                    this.usuarioRepository.save(usuario);
+                    textoRespuesta = "El usuario ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Algún objeto es null\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "Verifique los campos y vuelva a enciar el json\n";
         }
+
         return textoRespuesta;
     }
 

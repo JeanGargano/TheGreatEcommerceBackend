@@ -1,9 +1,6 @@
 package com.ecommerce.Service;
 
-import com.ecommerce.Model.ArticuloModel;
-import com.ecommerce.Model.OrdenPersonalizacionModel;
-import com.ecommerce.Model.TelefonoUsuarioModel;
-import com.ecommerce.Model.UsuarioModel;
+import com.ecommerce.Model.*;
 import com.ecommerce.Repository.ITelefonoUsuarioRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -39,29 +36,37 @@ public class TelefonoUsuarioServiceImp implements ITelefonoUsuarioService {
 
         String textoRespuesta = "";
 
-        UsuarioModel idUsuario = telefonoUsuario.getIdUsuario();
-        Integer telefono = telefonoUsuario.getTelefono();
+        try {
+            UsuarioModel idUsuario = telefonoUsuario.getIdUsuario();
+            Integer telefono = telefonoUsuario.getTelefono();
 
+            telefonoUsuariosExistentes = this.telefonoUsuarioRepository.findAll();
 
-        telefonoUsuariosExistentes = this.telefonoUsuarioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
-
-        if(telefonoUsuariosExistentes.isEmpty()){
-
-            this.telefonoUsuarioRepository.save(telefonoUsuario);
-
-            textoRespuesta =  "El telefono del usuario ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (idUsuario == null) {
-                textoRespuesta = "El id de su usuario no puede ser null.";
-            } else if (telefono == null) {
-                textoRespuesta = "El telefono no puede estar vacia o ser nulo";
-            } else {
+            if (telefonoUsuariosExistentes.isEmpty()) {
                 this.telefonoUsuarioRepository.save(telefonoUsuario);
-                textoRespuesta = "El telefono ha sido creado con éxito.";
+                textoRespuesta = "El telefono del usuario ha sido creado con éxito.";
+            } else {
+                if (idUsuario == null) {
+                    textoRespuesta += "El id de su usuario no puede ser nulo\n";
+                }
+                if (telefono == null) {
+                    textoRespuesta += "El ID de la talla no puede ser nulo\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+                } else {
+                    this.telefonoUsuarioRepository.save(telefonoUsuario);
+                    textoRespuesta = "El telefono del usuario ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Tiene errores en el json\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "Verifique si su usuario ya fue creado en la base de datos\n";
         }
+
         return textoRespuesta;
     }
 

@@ -40,25 +40,34 @@ public class TallaServiceImp implements ITallaService {
 
         String textoRespuesta = "";
 
-        Talla tallaP = talla.getTalla();
+        try {
+            Talla nombreT = talla.getTalla();
 
-        tallasExistentes = this.tallaRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
-        if (tallasExistentes.isEmpty()) {
+            tallasExistentes = this.tallaRepository.findAll();
 
-            this.tallaRepository.save(talla);
-
-            textoRespuesta = "La talla ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (tallaP == null) {
-                textoRespuesta = "La talla no puede estar vacia o ser nula";
-            } else {
+            if (tallasExistentes.isEmpty()) {
                 this.tallaRepository.save(talla);
-                textoRespuesta = "La talla ha sido creado con éxito.";
+                textoRespuesta = "La talla ha sido creada con éxito.";
+            } else {
+                if (nombreT == null) {
+                    textoRespuesta += "El nombre de la talla no puede ser nulo\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";}
+                else {
+                    this.tallaRepository.save(talla);
+                    textoRespuesta = "La talla ha sido creada con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Algún valor es nulo\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "Verifique los valores y vuelva a probar\n";
         }
+
         return textoRespuesta;
     }
     @Override

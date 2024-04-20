@@ -1,10 +1,7 @@
 package com.ecommerce.Service;
 
-import com.ecommerce.Model.ArticuloModel;
+import com.ecommerce.Model.*;
 import com.ecommerce.Model.Enums.EstadoPersonalizacion;
-import com.ecommerce.Model.OrdenModel;
-import com.ecommerce.Model.OrdenPersonalizacionModel;
-import com.ecommerce.Model.PersonalizacionModel;
 import com.ecommerce.Repository.IOrdenPersonalizacionRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -40,35 +37,46 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
 
         String textoRespuesta = "";
 
-        OrdenModel idOrden = ordenPersonalizacion.getIdOrden();
-        PersonalizacionModel idPersonalizacion = ordenPersonalizacion.getIdPersonalizacion();
-        EstadoPersonalizacion estado = ordenPersonalizacion.getEstado();
-        String reciboPago = ordenPersonalizacion.getReciboPago();
+        try {
+            OrdenModel idOrden = ordenPersonalizacion.getIdOrden();
+            PersonalizacionModel idPersonalizacion = ordenPersonalizacion.getIdPersonalizacion();
+            EstadoPersonalizacion estado = ordenPersonalizacion.getEstado();
+            String reciboPAGO = ordenPersonalizacion.getReciboPago();
 
+            ordenesPersonalizacionesExistentes = this.ordenPersonalizacionRepository.findAll();
 
-        ordenesPersonalizacionesExistentes = this.ordenPersonalizacionRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
-
-        if(ordenesPersonalizacionesExistentes.isEmpty()){
-
-            this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
-
-            textoRespuesta =  "La orden de personalizacion ha sido creada con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (idOrden == null ) {
-                textoRespuesta = "el id de la orden no puede ser nulo";
-            } else if (idPersonalizacion == null) {
-                textoRespuesta = "el id de la personalizacion no puede ser nulo";
-            } else if (estado == null) {
-                textoRespuesta = "El estado no puede ser nulo";
-            } else if (reciboPago == null || reciboPago.isBlank()) {
-                textoRespuesta = "El recibo de pago no puede ser nulo o estar vacio";
-            } else {
+            if (ordenesPersonalizacionesExistentes.isEmpty()) {
                 this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
-                textoRespuesta = "El articulo ha sido creado con éxito.";
+                textoRespuesta = "La orden de personalizacion ha sido creado con éxito.";
+            } else {
+                if (idOrden == null) {
+                    textoRespuesta += "el id de la orden no puede ser nulo\n";
+                }
+                if (idPersonalizacion == null) {
+                    textoRespuesta += "El id de la personalizacion no puede ser nulo\n";
+                }
+                if (estado == null) {
+                    textoRespuesta += "El estado no puede ser nulo, recuerde escribir Produccion o finalizada\n";
+
+                }
+                if (reciboPAGO == null || reciboPAGO.isBlank()) {
+                    textoRespuesta += "El recibo de pago no puede ser nulo, recuerde adjuntar una imagen\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";}
+                else {
+                    this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
+                    textoRespuesta = "La orden de personalizacion ha sido creada con exito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Algún objeto es nulo\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "Verifique si la personalizacion o la orden ya se encunetran creadas en la base de datos\n";
         }
+
         return textoRespuesta;
     }
 
