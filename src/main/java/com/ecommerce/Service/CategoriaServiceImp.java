@@ -5,6 +5,7 @@ package com.ecommerce.Service;
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.CategoriaModel;
 import com.ecommerce.Model.Enums.TipoSexo;
+import com.ecommerce.Model.TallaModel;
 import com.ecommerce.Repository.ICategoriaRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -40,29 +41,34 @@ public class CategoriaServiceImp implements ICategoriaService{
     public String crearCategoria(CategoriaModel categoria) {
         String textoRespuesta = "";
 
-        TipoSexo tipoSexo = categoria.getTipoSexo();
-        String tipoRopa = categoria.getTipoRopa();
+        try {
+            TipoSexo tipoSexo = categoria.getTipoSexo();
+            String tipoRopa = categoria.getTipoRopa();
 
 
-        CategoriasExistentes = this.categoriaRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
+            CategoriasExistentes = this.categoriaRepository.findAll();
 
-        if(CategoriasExistentes.isEmpty()){
-
-            this.categoriaRepository.save(categoria);
-
-            textoRespuesta =  "La categoria ha sido creada con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (tipoSexo == null) {
-                textoRespuesta = "El tipo de sexo no puede estar vacio";
-            } else if (tipoRopa == null || tipoRopa.isBlank()) {
-                textoRespuesta = "El tipo de ropa no puede estar vacia o ser nula";
-            } else {
+            if (CategoriasExistentes.isEmpty()) {
                 this.categoriaRepository.save(categoria);
                 textoRespuesta = "La categoria ha sido creado con éxito.";
+            } else {
+                if (tipoSexo == null) {
+                    textoRespuesta += "El tipo de sexo no puede ser nulo\n";
+                }if(tipoRopa == null){
+                    textoRespuesta += "El tipo de ropa no puede ser nulo\n";
+                } else {
+                    this.categoriaRepository.save(categoria);
+                    textoRespuesta = "La categoria ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Tiene errores en el json \n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "Corrija los errores en el json y vuelva a intentar\n";
         }
+
         return textoRespuesta;
     }
 
