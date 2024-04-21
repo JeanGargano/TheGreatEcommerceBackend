@@ -37,6 +37,9 @@ public class EnvioServiceImp implements IEnvioService{
         String textoRespuesta = "";
         try {
             String direccion = envio.getDireccion();
+            DepartamentoModel idDepartamento = envio.getIdDepartamento();
+            String tipoEntrega = envio.getTipoEntrega();
+            OrdenModel idOrden = envio.getIdOrden();
             enviosExistentes = this.envioRepository.findAll();
 
             if (enviosExistentes.isEmpty()) {
@@ -45,6 +48,15 @@ public class EnvioServiceImp implements IEnvioService{
             } else {
                 if (direccion == null || direccion.isBlank()) {
                     textoRespuesta += "La direccion no puede ser nula o estar vacia\n";
+                }
+                if (idDepartamento == null) {
+                    textoRespuesta += "La id de Departamento no puede ser nula o estar vacia\n";
+                }
+                if (tipoEntrega == null || tipoEntrega.isBlank()) {
+                    textoRespuesta += "El tipo de entrega no puede ser nulo o estar vacio\n";
+                }
+                if (idOrden == null ) {
+                    textoRespuesta += "La id de Orden no puede ser nula o estar vacia\n";
                 }
                 if (!textoRespuesta.isEmpty()) {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
@@ -58,7 +70,7 @@ public class EnvioServiceImp implements IEnvioService{
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
-            textoRespuesta += "verifique si la direccion ya se encuentra en la base de datos\n";
+            textoRespuesta += "verifique si el objeto ya se encuentra en la base de datos\n";
         }
         return textoRespuesta;
   }

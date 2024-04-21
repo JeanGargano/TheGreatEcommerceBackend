@@ -1,9 +1,6 @@
 package com.ecommerce.Service;
 
-import com.ecommerce.Model.ArticuloModel;
-import com.ecommerce.Model.CategoriaModel;
-import com.ecommerce.Model.CiudadModel;
-import com.ecommerce.Model.DepartamentoModel;
+import com.ecommerce.Model.*;
 import com.ecommerce.Repository.IDepartamentoRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -38,8 +35,8 @@ public class DepartamentoServiceImp implements IDepartamentoService{
 
         String textoRespuesta = "";
         try {
-
             String nombre = departamento.getNombre();
+            CiudadModel idCiudad = departamento.getIdCiudad();
 
             departamentosExistentes = this.departamentoRepository.findAll();
 
@@ -48,25 +45,27 @@ public class DepartamentoServiceImp implements IDepartamentoService{
                 textoRespuesta = "El departamento ha sido creado con éxito.";
             } else {
                 if (nombre == null || nombre.isBlank()) {
-                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+                    textoRespuesta += "El nombre no puede estar vacio o ser null\n";
+                }
+                if (idCiudad == null) {
+                    textoRespuesta += "El id de Ciudad no puede ser nulo o estar vacio\n";
                 }
                 if (!textoRespuesta.isEmpty()) {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
-                }else {
+                } else {
                     this.departamentoRepository.save(departamento);
-                    textoRespuesta = "El departamento ha sido creado con éxito.";
+                    textoRespuesta = "El Departamento ha sido creado con éxito.";
                 }
             }
         } catch (NullPointerException e) {
-            textoRespuesta += "Algún objeto es nulo\n";
+            textoRespuesta += "Verifique bien los campos\n";
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
-            textoRespuesta += "verifique si la categoria ya se encuentra en la base de datos\n";
+            textoRespuesta += "verifique si el usuario ya se encuentra creado en la base de datos\n";
         }
         return textoRespuesta;
     }
-
     @Override
     public List<DepartamentoModel> listarDepartamento() {
         return this.departamentoRepository.findAll();

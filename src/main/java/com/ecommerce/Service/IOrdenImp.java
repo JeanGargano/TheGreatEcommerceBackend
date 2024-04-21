@@ -40,6 +40,7 @@ public class IOrdenImp implements IOrdenService {
 
             String fecha = orden.getFecha();
             Double valorTotal = orden.getValorTotal();
+            UsuarioModel idUsuario = orden.getIdUsuario();
 
             ordenesExistentes = this.ordenRepository.findAll();
 
@@ -53,7 +54,11 @@ public class IOrdenImp implements IOrdenService {
                 if (valorTotal == null ) {
                     textoRespuesta += "El Valor Totalno puede ser nulo o estar vacio\n";
 
-                }if (!textoRespuesta.isEmpty()) {
+                }
+                if (idUsuario == null ) {
+                    textoRespuesta += "El id de Usuario no puede ser nulo o estar vacio\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
                 }else {
                     this.ordenRepository.save(orden);
@@ -65,7 +70,7 @@ public class IOrdenImp implements IOrdenService {
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
-            textoRespuesta += "verifique el JSON\n";
+            textoRespuesta += "verifique el que el objeto este en la base de datos git\n";
         }
         return textoRespuesta;
     }
