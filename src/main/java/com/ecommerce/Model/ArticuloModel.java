@@ -20,12 +20,19 @@ public class ArticuloModel {
     private String descripcion;
     private String nombre;
     private Integer precio;
+    private Integer cantidad;
 
 
     @ManyToOne
     @JoinColumn(name= "idCategoria")
     private CategoriaModel idCategoria;
+
     private Boolean esPersonalizable;
+
+    @ManyToOne
+    @JoinColumn(name = "idTalla")
+    private TallaModel idTalla;
+
 
 
 

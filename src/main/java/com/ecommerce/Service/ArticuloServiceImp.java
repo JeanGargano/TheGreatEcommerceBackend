@@ -45,6 +45,8 @@ public class ArticuloServiceImp implements IArticuloService {
             Integer precio = articulo.getPrecio();
             CategoriaModel categoria = articulo.getIdCategoria();
             Boolean personalizable = articulo.getEsPersonalizable();
+            Integer cantidad = articulo.getCantidad();
+            TallaModel  nombreTalla = articulo.getIdTalla();
 
             ArticulosExistentes = this.ArticuloRepository.findAll();
 
@@ -65,8 +67,14 @@ public class ArticuloServiceImp implements IArticuloService {
                     textoRespuesta += "El precio no puede estar vacio\n";
 
                 }
+                if (cantidad == null) {
+                    textoRespuesta += "La cantidad no puede ser nula\n";}
+
                 if (nombre == null || nombre.isBlank()) {
                     textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+                }
+                if (nombreTalla == null) {
+                    textoRespuesta += "La talla no puede ser nula\n";
                 }
                 if (categoria == null) {
                     textoRespuesta += "La categoria no puede ser nula.\n";
@@ -85,7 +93,7 @@ public class ArticuloServiceImp implements IArticuloService {
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
-            textoRespuesta += "verifique si la categoria ya se encuentra en la base de datos\n";
+            textoRespuesta += "verifique si la categoria o la talla ya se encuentran en la base de datos\n";
         }
         return textoRespuesta;
     }

@@ -1,9 +1,7 @@
 package com.ecommerce.Controller;
 
 
-import com.ecommerce.Model.ArticuloTallaModel;
 import com.ecommerce.Model.PersonalizacionModel;
-import com.ecommerce.Service.IArticuloTallaService;
 import com.ecommerce.Service.IPersonalizacionService;
 import com.ecommerce.exception.RecursoNoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
