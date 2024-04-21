@@ -38,32 +38,44 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
     public String crearOrdenArticulo(OrdenArticuloModel ordenArticulo) {
 
         String textoRespuesta = "";
+        try {
 
-        ordenesArticulosExistentes = this.ordenArticuloRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
+            OrdenModel idOrden = ordenArticulo.getIdOrden();
+            ArticuloModel idArticulo = ordenArticulo.getIdArticulo();
+            Integer cantidad = ordenArticulo.getCantidad();
 
-        if(ordenesArticulosExistentes.isEmpty()){
+            ordenesArticulosExistentes = this.ordenArticuloRepository.findAll();
 
-            this.ordenArticuloRepository.save(ordenArticulo);
+            if (ordenesArticulosExistentes.isEmpty()) {
+                this.ordenArticuloRepository.save(ordenArticulo);
+                textoRespuesta = "La OrdenArticulo ha sido creada con éxito.";
+            } else {
+                if (idOrden == null ) {
+                    textoRespuesta += "El id de la Orden no puede ser nulo o estar vacio\n";
+                }
+                if (idArticulo == null ) {
+                    textoRespuesta += "El id del Articulo no puede ser nulo o estar vacio\n";
 
-            textoRespuesta =  "La orden de articulo ha sido creada con éxito";
+                }
+                if (cantidad == null ) {
+                    textoRespuesta += "La cantidad no puede ser nula o estar vacia\n";
 
-        }else {
-            // Verificamos si el articulo existe (Para evitar duplicados)
-            for (OrdenArticuloModel i : ordenesArticulosExistentes) {
-                if (ordenArticulo.getIdOrdenArticulo().equals(i.getIdOrdenArticulo())) {
-
-                    textoRespuesta = "La orden de articulo con ID: " + ordenArticulo.getIdOrdenArticulo() + ", Ya se encuentra creada.";
-                    // No es necesario continuar verificando una vez que se encuentra un área existente
-                } else {
-
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+                }else {
                     this.ordenArticuloRepository.save(ordenArticulo);
-
-                    textoRespuesta = "La orden de articulo ha sido creada con éxito";
+                    textoRespuesta = "La OrdenArticulo ha sido creada con éxito.";
                 }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Algún objeto es nulo\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "verifique el JSON\n";
         }
         return textoRespuesta;
-
     }
     public String crearArticulo(OrdenArticuloModel ordenArticulo) {
 

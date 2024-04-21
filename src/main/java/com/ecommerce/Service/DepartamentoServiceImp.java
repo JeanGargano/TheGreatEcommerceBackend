@@ -1,6 +1,7 @@
 package com.ecommerce.Service;
 
 import com.ecommerce.Model.ArticuloModel;
+import com.ecommerce.Model.CategoriaModel;
 import com.ecommerce.Model.CiudadModel;
 import com.ecommerce.Model.DepartamentoModel;
 import com.ecommerce.Repository.IDepartamentoRepository;
@@ -36,30 +37,32 @@ public class DepartamentoServiceImp implements IDepartamentoService{
     public String crearDepartamento(DepartamentoModel departamento) {
 
         String textoRespuesta = "";
+        try {
 
-        String nombre = departamento.getNombre();
-        CiudadModel idCiudad = departamento.getIdCiudad();
+            String nombre = departamento.getNombre();
 
+            departamentosExistentes = this.departamentoRepository.findAll();
 
-        departamentosExistentes = this.departamentoRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
-
-        if(departamentosExistentes.isEmpty()){
-
-            this.departamentoRepository.save(departamento);
-
-            textoRespuesta =  "El departamento ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (nombre == null || nombre.isBlank()) {
-                textoRespuesta = "El nombre de departamneto no puede estar vacia o ser nula";
-            }else if(idCiudad == null){
-                textoRespuesta = "el id de la ciudad no puede ser nulo";
-            }
-            else {
+            if (departamentosExistentes.isEmpty()) {
                 this.departamentoRepository.save(departamento);
-                textoRespuesta = "El departamneto ha sido creado con éxito.";
+                textoRespuesta = "El departamento ha sido creado con éxito.";
+            } else {
+                if (nombre == null || nombre.isBlank()) {
+                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+                }
+                if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+                }else {
+                    this.departamentoRepository.save(departamento);
+                    textoRespuesta = "El departamento ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Algún objeto es nulo\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "verifique si la categoria ya se encuentra en la base de datos\n";
         }
         return textoRespuesta;
     }

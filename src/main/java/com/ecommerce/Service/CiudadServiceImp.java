@@ -44,26 +44,30 @@ public class CiudadServiceImp implements ICiudadService {
     public String crearCiudad(CiudadModel ciudad) {
 
         String textoRespuesta = "";
+        try {
 
-        String nombre = ciudad.getNombre();
+            String nombre = ciudad.getNombre();
 
 
-        CiudadesExistentes = this.ciudadRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
+            CiudadesExistentes = this.ciudadRepository.findAll();
 
-        if(CiudadesExistentes.isEmpty()){
-
-            this.ciudadRepository.save(ciudad);
-
-            textoRespuesta =  "La ciudad ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (nombre == null || nombre.isBlank()) {
-                textoRespuesta = "El nombre de la ciudad no puede estar vacio o ser nulo";
-            } else {
+            if (CiudadesExistentes.isEmpty()) {
                 this.ciudadRepository.save(ciudad);
                 textoRespuesta = "La ciudad ha sido creado con éxito.";
+            } else {
+                if (nombre == null || nombre.isBlank()) {
+                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+                } else {
+                    this.ciudadRepository.save(ciudad);
+                    textoRespuesta = "La ciudad ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Verifica los errores\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "vuelve a enviar el JSON\n";
         }
         return textoRespuesta;
     }

@@ -36,31 +36,36 @@ public class IOrdenImp implements IOrdenService {
     public String crearOrden(OrdenModel orden) {
 
         String textoRespuesta = "";
+        try {
 
-        String fecha = orden.getFecha();
-        Double valorTotal = orden.getValorTotal();
-        UsuarioModel idUsuario = orden.getIdUsuario();
+            String fecha = orden.getFecha();
+            Double valorTotal = orden.getValorTotal();
 
-        ordenesExistentes = this.ordenRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
+            ordenesExistentes = this.ordenRepository.findAll();
 
-        if(ordenesExistentes.isEmpty()){
-
-            this.ordenRepository.save(orden);
-
-            textoRespuesta =  "La orden ha sido creada con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (fecha == null || fecha.isBlank()) {
-                textoRespuesta = "La fecha no puede estar vacia o ser nula";
-            } else if (valorTotal == null) {
-                textoRespuesta = "El valor total no puede ser nulo";
-            } else if (idUsuario == null) {
-                textoRespuesta = "El id de su usuario no puede ser nulo";
-            } else {
+            if (ordenesExistentes.isEmpty()) {
                 this.ordenRepository.save(orden);
-                textoRespuesta = "La orden ha sido creado con éxito.";
+                textoRespuesta = "La orden ha sido creada con éxito.";
+            } else {
+                if (fecha == null || fecha.isBlank()) {
+                    textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
+                }
+                if (valorTotal == null ) {
+                    textoRespuesta += "El Valor Totalno puede ser nulo o estar vacio\n";
+
+                }if (!textoRespuesta.isEmpty()) {
+                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+                }else {
+                    this.ordenRepository.save(orden);
+                    textoRespuesta = "El comentario ha sido creado con éxito.";
+                }
             }
+        } catch (NullPointerException e) {
+            textoRespuesta += "Algún objeto es nulo\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "verifique el JSON\n";
         }
         return textoRespuesta;
     }
