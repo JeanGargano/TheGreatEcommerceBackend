@@ -50,7 +50,7 @@ public class EnvioServiceImp implements IEnvioService{
                     textoRespuesta += "La direccion no puede ser nula o estar vacia\n";
                 }
                 if (idDepartamento == null) {
-                    textoRespuesta += "La id de Departamento no puede ser nula o estar vacia\n";
+                    textoRespuesta += "La id de Departamento no puede ser nulo o estar vacia\n";
                 }
                 if (tipoEntrega == null || tipoEntrega.isBlank()) {
                     textoRespuesta += "El tipo de entrega no puede ser nulo o estar vacio\n";
@@ -70,7 +70,7 @@ public class EnvioServiceImp implements IEnvioService{
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
-            textoRespuesta += "verifique si el objeto ya se encuentra en la base de datos\n";
+            textoRespuesta += "verifique si el departamento o la orden ya se encunetran en la base de datos\n";
         }
         return textoRespuesta;
   }

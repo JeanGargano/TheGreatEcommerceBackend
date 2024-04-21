@@ -70,7 +70,7 @@ public class IOrdenImp implements IOrdenService {
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
-            textoRespuesta += "verifique el que el objeto este en la base de datos git\n";
+            textoRespuesta += "verifique que el usuario este creado en la base de datos\n";
         }
         return textoRespuesta;
     }

@@ -77,38 +77,7 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
         }
         return textoRespuesta;
     }
-    public String crearArticulo(OrdenArticuloModel ordenArticulo) {
 
-        String textoRespuesta = "";
-
-        OrdenModel idOrden = ordenArticulo.getIdOrden();
-        ArticuloModel idArtticulo = ordenArticulo.getIdArticulo();
-        Integer cantidad = ordenArticulo.getCantidad();
-
-
-        ordenesArticulosExistentes = this.ordenArticuloRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
-
-        if(ordenesArticulosExistentes.isEmpty()){
-
-            this.ordenArticuloRepository.save(ordenArticulo);
-
-            textoRespuesta =  "La orden de artículo ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
-
-        } else {
-            if (idOrden == null) {
-                textoRespuesta = "El id de su orden no puede ser nulo";
-            } else if (idArtticulo == null ) {
-                textoRespuesta = "El id de su articulo no puede ser nulo";
-            } else if (cantidad == null) {
-                textoRespuesta = "La cantidad no puede ser nula o estar vacia";
-            } else {
-                this.ordenArticuloRepository.save(ordenArticulo);
-                textoRespuesta = "La orden de articulo ha sido creado con éxito.";
-            }
-        }
-        return textoRespuesta;
-    }
 
     @Override
     public List<OrdenArticuloModel> listarOrdenArticulo() {
