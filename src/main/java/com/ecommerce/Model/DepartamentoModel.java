@@ -18,7 +18,4 @@ public class DepartamentoModel {
     private Integer idDepartamento;
     private String nombre;
 
-    @ManyToOne
-    @JoinColumn(name = "idCiudad")
-    private CiudadModel idCiudad;
 }

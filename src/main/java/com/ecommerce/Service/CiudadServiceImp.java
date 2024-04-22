@@ -5,6 +5,7 @@ package com.ecommerce.Service;
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.CategoriaModel;
 import com.ecommerce.Model.CiudadModel;
+import com.ecommerce.Model.DepartamentoModel;
 import com.ecommerce.Repository.ICiudadRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -47,6 +48,7 @@ public class CiudadServiceImp implements ICiudadService {
         try {
 
             String nombre = ciudad.getNombre();
+            DepartamentoModel idDepartamento = ciudad.getIdDepartamento();
 
 
             CiudadesExistentes = this.ciudadRepository.findAll();
@@ -57,7 +59,11 @@ public class CiudadServiceImp implements ICiudadService {
             } else {
                 if (nombre == null || nombre.isBlank()) {
                     textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
-                } else {
+                }
+                if (idDepartamento == null ) {
+                    textoRespuesta += "El id de su departamneto no puede ser null\n";
+                }
+                else {
                     this.ciudadRepository.save(ciudad);
                     textoRespuesta = "La ciudad ha sido creado con éxito.";
                 }
@@ -67,7 +73,7 @@ public class CiudadServiceImp implements ICiudadService {
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
-            textoRespuesta += "vuelve a enviar el JSON\n";
+            textoRespuesta += "verifique si su departamneto ya se encuentra creado en la bd\n";
         }
         return textoRespuesta;
     }

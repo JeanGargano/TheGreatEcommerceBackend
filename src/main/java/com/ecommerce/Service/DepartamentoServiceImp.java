@@ -36,7 +36,6 @@ public class DepartamentoServiceImp implements IDepartamentoService{
         String textoRespuesta = "";
         try {
             String nombre = departamento.getNombre();
-            CiudadModel idCiudad = departamento.getIdCiudad();
 
             departamentosExistentes = this.departamentoRepository.findAll();
 
@@ -46,9 +45,6 @@ public class DepartamentoServiceImp implements IDepartamentoService{
             } else {
                 if (nombre == null || nombre.isBlank()) {
                     textoRespuesta += "El nombre no puede estar vacio o ser null\n";
-                }
-                if (idCiudad == null) {
-                    textoRespuesta += "El id de Ciudad no puede ser nulo o estar vacio\n";
                 }
                 if (!textoRespuesta.isEmpty()) {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";

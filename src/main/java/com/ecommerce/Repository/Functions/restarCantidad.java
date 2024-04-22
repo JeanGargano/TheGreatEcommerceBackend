@@ -17,20 +17,7 @@ public class restarCantidad {
     IOrdenArticuloRepository ordenArticuloRepository;
     IArticuloRepository articuloRepository;
 
-    public void restarCantidad(){
-        int cantidad = 0;
-        if (cantidad > 0) {
 
-            actualizarCantidadEnBD(); // Actualizar la cantidad en la base de datos
-
-            if (cantidad == 0) {
-                System.out.println("¡El producto está agotado!");
-            }
-        } else {
-            System.out.println("¡El producto está agotado!");
-        }
-
-    }
 
     private String actualizarCantidadEnBD(Integer idOrden, Integer idArticulo) {
 
