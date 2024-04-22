@@ -1,9 +1,21 @@
 package com.ecommerce.Repository.Functions;
+import com.ecommerce.Model.ArticuloModel;
+import com.ecommerce.Model.OrdenArticuloModel;
+import com.ecommerce.Model.OrdenModel;
+import com.ecommerce.Repository.IArticuloRepository;
+import com.ecommerce.Repository.IOrdenArticuloRepository;
+import org.springframework.dao.DataIntegrityViolationException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Optional;
+
 public class restarCantidad {
+
+    IOrdenArticuloRepository ordenArticuloRepository;
+    IArticuloRepository articuloRepository;
 
     public void restarCantidad(){
         int cantidad = 0;
@@ -20,25 +32,41 @@ public class restarCantidad {
 
     }
 
-    private void actualizarCantidadEnBD() {
+    private String actualizarCantidadEnBD(Integer idOrden, Integer idArticulo) {
 
-        int cantidad = 0; // Aca se debe cambiar luego por el JSON request que llegue pa tomar la variable correcta.
-        String url = "jdbc:mysql://localhost:3306/mydb";
-        String usuario = "root";
-        String contraseña = "root";
+        String textoRespuesta = "";
+        Integer cantidadTotal;
+        try{
 
-        String sql = "UPDATE cantidad SET cantidad = ? WHERE idArticuloTalla = ?";
+            Optional<OrdenArticuloModel> orden = ordenArticuloRepository.findById(idOrden);
+            Optional<ArticuloModel> articulo = articuloRepository.findById(idArticulo);
 
-        try (Connection conn = DriverManager.getConnection(url, usuario, contraseña);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            OrdenArticuloModel ordenArticulo = orden.get();
+            ArticuloModel articuloModel = articulo.get();
 
-            pstmt.setInt(1, cantidad);
+            Integer cantidadOrden = ordenArticulo.getCantidad();
+            Integer cantidadArticulo = articuloModel.getCantidad();
 
-            pstmt.executeUpdate();
+            if(cantidadArticulo <=0){
+                textoRespuesta = "No hay stock disponble para el articulo: " + idArticulo;
+            }else if(cantidadOrden > cantidadArticulo){
+                textoRespuesta = "La cantidad de la orden no puede superar a la del articulo";
+            }else{
+                //cantidadTotal = cantidadArticulo - cantidadOrden;
 
-        } catch (SQLException e) {
-            System.out.println("Error al actualizar la cantidad en la base de datos: " + e.getMessage());
+                // articuloModel.setCantidad(cantidadTotal);
+
+                articuloRepository.save(articulo.get());
+
+                textoRespuesta = "Ok";
+            }
+
+        }catch (NullPointerException e){
+            textoRespuesta = "El producto no existe";
+        }catch (DataIntegrityViolationException e){
+            textoRespuesta = "Un problema en el JSON, verifique";
         }
+        return textoRespuesta;
 
     }
 }
