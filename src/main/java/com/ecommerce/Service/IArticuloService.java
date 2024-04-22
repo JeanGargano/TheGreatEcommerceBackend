@@ -16,6 +16,8 @@ public interface IArticuloService {
     String eliminarArticuloPorId(Integer idArticulo);
 
     String actualizarArticuloPorId(ArticuloModel Articulo, Integer idArticulo);
+
+    List<ArticuloModel> obtenerPorCategoria(String nombreCategoria);
 }
 
 

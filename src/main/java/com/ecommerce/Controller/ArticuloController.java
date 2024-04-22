@@ -50,4 +50,10 @@ public class ArticuloController {
         return ResponseEntity.ok(resultado);
     }
 
+    @GetMapping("/categoria/{nombreCategoria}")
+    public ResponseEntity<List<ArticuloModel>> obtenerArticulosPorCategoria(@PathVariable String nombreCategoria) {
+        List<ArticuloModel> articulos = articuloService.obtenerPorCategoria(nombreCategoria);
+        return ResponseEntity.ok(articulos);
+    }
+
 }

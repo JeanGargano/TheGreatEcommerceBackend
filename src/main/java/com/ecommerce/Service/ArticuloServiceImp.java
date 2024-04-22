@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.UncheckedIOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -170,7 +171,24 @@ public class ArticuloServiceImp implements IArticuloService {
         return textoRespuesta;
     }
 
-}
+    public List<ArticuloModel> obtenerPorCategoria(String nombreCategoria) {
+            List<ArticuloModel> articulosPorCategoria = new ArrayList<>();
+
+            // Consulta la base de datos para obtener todos los artículos de la categoría especificada
+            List<ArticuloModel> todosLosArticulos = ArticuloRepository.findAll();
+            for (ArticuloModel articulo : todosLosArticulos) {
+                if (articulo.getIdCategoria().getTipoRopa().equals(nombreCategoria)) {
+                    articulosPorCategoria.add(articulo);
+                }
+            }
+
+            return articulosPorCategoria;
+        }
+    }
+
+
+
+
 
 
 //
