@@ -41,12 +41,11 @@ public class UsuarioServiceImp implements IUsuarioService {
 
         try {
             String nombre = usuario.getNombre();
-            Integer telefono = usuario.getTelefono();
             String correo = usuario.getCorreo();
-            String direccion = usuario.getDireccion();
             TipoUsuario rol = usuario.getRol();
             TipoSexo sexo = usuario.getSexo();
             Integer identificacion = usuario.getIdentificacion();
+            Long telefono = usuario.getTelefono();
 
 
             usuariosExistentes = this.usuarioRepository.findAll();
@@ -58,14 +57,11 @@ public class UsuarioServiceImp implements IUsuarioService {
                 if (nombre == null || nombre.isBlank()) {
                     textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
                 }
-                if (telefono == null) {
-                    textoRespuesta += "El telefono no puede ser nulo\n";
+                if (telefono == null ) {
+                    textoRespuesta += "su telefono no puede ser null\n";
                 }
                 if (correo == null || correo.isBlank()) {
                     textoRespuesta += "El correo no puede ser nulo o estar vacio\n";
-                }
-                if (direccion == null || direccion.isBlank()) {
-                    textoRespuesta += "La direccion no puede ser nula o estar vacia\n";
                 }
                 if (rol == null ) {
                     textoRespuesta += "El rol no puede ser null\n";

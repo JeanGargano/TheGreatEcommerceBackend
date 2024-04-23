@@ -18,9 +18,8 @@ public class UsuarioModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idUsuario;
     private String nombre;
-    private Integer telefono;
+    private Long telefono;
     private String correo;
-    private String direccion;
 
     @Column(name= "rol")
     @Enumerated(EnumType.STRING)
@@ -31,6 +30,8 @@ public class UsuarioModel {
     private TipoSexo Sexo;
 
     private Integer identificacion;
+
+    private String contraseña;
 
 
 
