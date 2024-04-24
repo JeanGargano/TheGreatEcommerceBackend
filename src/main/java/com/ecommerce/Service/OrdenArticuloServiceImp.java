@@ -2,8 +2,6 @@ package com.ecommerce.Service;
 
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.OrdenArticuloModel;
-import com.ecommerce.Model.OrdenModel;
-import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Repository.IArticuloRepository;
 import com.ecommerce.Repository.IOrdenArticuloRepository;
 import jakarta.annotation.PostConstruct;
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import com.ecommerce.Repository.Functions.restarCantidad;
 
 import java.io.UncheckedIOException;
 import java.util.List;
@@ -27,6 +24,8 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
     IOrdenArticuloRepository ordenArticuloRepository;
     @Autowired
     IArticuloRepository articuloRepository;
+    @Autowired
+    IArticuloService articuloService;
 
     private List<OrdenArticuloModel> ordenesArticulosExistentes; // Se crea para mantener actualizado los datos entre bd y api
 
@@ -40,6 +39,7 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
 
     @Override
     public String crearOrdenArticulo(OrdenArticuloModel ordenArticulo) {
+
 
         String textoRespuesta = "";
         try {
@@ -63,6 +63,7 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
                     textoRespuesta += "El id de la Orden no puede ser nulo o estar vacio\n";
                 }
                 if (idArticulo == null ) {
+
                     textoRespuesta += "El id del Articulo no puede ser nulo o estar vacio\n";
 
                 }
@@ -75,12 +76,7 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
                 }else {
                     this.ordenArticuloRepository.save(ordenArticulo);
                     textoRespuesta = "La OrdenArticulo ha sido creada con éxito.";
-
-                    restarCantidad objR = new restarCantidad();
-
-                    System.out.println("El obj es:" +objR.toString());
-                    String r = objR.actualizarCantidadEnBD(ordenArticulo, articulo);
-                    System.out.println(r);
+                    articuloService.actualizarCantidadEnBd(ordenArticulo, articulo);
                 }
             }
         } catch (NullPointerException e) {

@@ -2,6 +2,7 @@ package com.ecommerce.Service;
 
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.CategoriaModel;
+import com.ecommerce.Model.OrdenArticuloModel;
 import com.ecommerce.Model.TallaModel;
 import com.ecommerce.Repository.IArticuloRepository;
 import jakarta.annotation.PostConstruct;
@@ -184,7 +185,40 @@ public class ArticuloServiceImp implements IArticuloService {
 
             return articulosPorCategoria;
         }
+
+    @Override
+    public String actualizarCantidadEnBd(OrdenArticuloModel ordenArticulo, ArticuloModel articulo) {
+
+        String textoRespuesta = "";
+        int cantidadTotal = 0;
+
+
+        try{
+
+            Integer cantidadArticulo = articulo.getCantidad();
+            Integer cantidadOrden = ordenArticulo.getCantidad();
+
+            if(cantidadArticulo <= 0){
+                textoRespuesta = "No hay stock disponble para el articulo. ";
+            }else if(cantidadOrden > cantidadArticulo){
+                textoRespuesta = "La cantidad de la orden no puede superar a la del articulo";
+            }else{
+                cantidadTotal = cantidadArticulo - cantidadOrden;
+                articulo.setCantidad(cantidadTotal);
+                this.ArticuloRepository.save(articulo);
+                textoRespuesta = "Se ha actualizado el proceso correctamente.";
+            }
+
+        }catch (NullPointerException e){
+            textoRespuesta = "El producto no existe" + e.getLocalizedMessage();
+        }catch (DataIntegrityViolationException e){
+            textoRespuesta = "Un problema en el JSON, verifique";
+        }
+        return textoRespuesta;
+
     }
+    }
+
 
 
 

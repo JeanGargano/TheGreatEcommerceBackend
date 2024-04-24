@@ -7,4 +7,6 @@ import java.util.List;
 public interface IArticuloRepository extends JpaRepository<ArticuloModel, Integer> {
 
 
+
+
 }
