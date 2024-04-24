@@ -31,7 +31,7 @@ public class UsuarioModel {
 
     private Integer identificacion;
 
-    private String contraseña;
+    private String contrasenia;
 
 
 

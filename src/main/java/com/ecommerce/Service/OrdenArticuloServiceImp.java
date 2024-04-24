@@ -4,6 +4,7 @@ import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.OrdenArticuloModel;
 import com.ecommerce.Model.OrdenModel;
 import com.ecommerce.Model.UsuarioModel;
+import com.ecommerce.Repository.IArticuloRepository;
 import com.ecommerce.Repository.IOrdenArticuloRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import com.ecommerce.Repository.Functions.restarCantidad;
 
 import java.io.UncheckedIOException;
 import java.util.List;
@@ -23,6 +25,8 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
 
     @Autowired
     IOrdenArticuloRepository ordenArticuloRepository;
+    @Autowired
+    IArticuloRepository articuloRepository;
 
     private List<OrdenArticuloModel> ordenesArticulosExistentes; // Se crea para mantener actualizado los datos entre bd y api
 
@@ -40,9 +44,14 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
         String textoRespuesta = "";
         try {
 
-            OrdenModel idOrden = ordenArticulo.getIdOrden();
-            ArticuloModel idArticulo = ordenArticulo.getIdArticulo();
+            Integer idOrden = ordenArticulo.getIdOrden().getIdOrden();
+            Integer idArticulo = ordenArticulo.getIdArticulo().getIdArticulo();
             Integer cantidad = ordenArticulo.getCantidad();
+
+            Optional<ArticuloModel> articuloOpcional = articuloRepository.findById(idArticulo);
+
+            ArticuloModel articulo = articuloOpcional.get();
+
 
             ordenesArticulosExistentes = this.ordenArticuloRepository.findAll();
 
@@ -66,6 +75,12 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
                 }else {
                     this.ordenArticuloRepository.save(ordenArticulo);
                     textoRespuesta = "La OrdenArticulo ha sido creada con éxito.";
+
+                    restarCantidad objR = new restarCantidad();
+
+                    System.out.println("El obj es:" +objR.toString());
+                    String r = objR.actualizarCantidadEnBD(ordenArticulo, articulo);
+                    System.out.println(r);
                 }
             }
         } catch (NullPointerException e) {
