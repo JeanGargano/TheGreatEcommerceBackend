@@ -12,4 +12,6 @@ public interface IUsuarioService {
     List<UsuarioModel> listarUsuario();
     Optional<UsuarioModel> obtenerUsuarioPorId(Integer idUsuario);
     String actualizarUsuarioPorId(UsuarioModel usuario, Integer idUsuario);
+
+    String verificarUsuario(String correo, String contraseña);
 }

@@ -135,4 +135,47 @@ public class UsuarioServiceImp implements IUsuarioService {
 
         return textoRespuesta;
     }
+
+    @Override
+    public String verificarUsuario(String correo, String contrasenia){
+
+        String textoRespuesta = "";
+
+        try {
+            Optional<UsuarioModel> usuarioBuscado = usuarioRepository.findUsuarioModelByCorreo(correo);
+
+            UsuarioModel usuarioEncontrado = usuarioBuscado.get();
+
+            String correoCapturado = usuarioEncontrado.getCorreo();
+            String contraseniaCapturado = usuarioEncontrado.getContrasenia();
+
+
+            if (correoCapturado.equals(correo) && contrasenia.equals(contraseniaCapturado)) {
+
+
+                textoRespuesta = "Usuario Verificado con éxito";
+
+            } else {
+
+                if (!correo.equals(correoCapturado)) {
+
+                    textoRespuesta = "El correo no es igual al dado";
+
+                } else if (!contrasenia.equals(contraseniaCapturado)) {
+                    textoRespuesta = "La contraseña no es correcta";
+                }
+
+            }
+
+
+        }catch (NullPointerException e) {
+            textoRespuesta += "Algún valor es nulo\n";
+        } catch (UncheckedIOException e) {
+            textoRespuesta += "Errores\n";
+        } catch (DataIntegrityViolationException e) {
+            textoRespuesta += "Verifique los valores y vuelva a probar\n";
+        }
+
+        return textoRespuesta;
+    }
 }

@@ -45,4 +45,11 @@ public class UsuarioController {
         return ResponseEntity.ok(resultado);
     }
 
+    @GetMapping("/get/{correo}/{contrasenia}")
+    public ResponseEntity<String> obtenerUsuarioPorCorreo(@RequestBody @PathVariable String correo, @PathVariable String contrasenia) {
+        String resultado = usuarioService.verificarUsuario(correo, contrasenia);
+        return ResponseEntity.ok(resultado);
+    }
+
+
 }
