@@ -63,7 +63,7 @@ public class IOrdenImp implements IOrdenService {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
                 }else {
                     this.ordenRepository.save(orden);
-                    textoRespuesta = "El comentario ha sido creado con éxito.";
+                    textoRespuesta = "La orden ha sido creada con éxito.";
 
 
                 }

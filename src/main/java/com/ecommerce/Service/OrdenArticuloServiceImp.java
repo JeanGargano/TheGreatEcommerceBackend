@@ -1,7 +1,9 @@
 package com.ecommerce.Service;
 
+import com.ecommerce.Model.ArticuloDTO.ArticuloModelDTO;
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.OrdenArticuloModel;
+import com.ecommerce.Model.OrdenModel;
 import com.ecommerce.Repository.IArticuloRepository;
 import com.ecommerce.Repository.IOrdenArticuloRepository;
 import jakarta.annotation.PostConstruct;
@@ -12,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,45 +41,112 @@ public class OrdenArticuloServiceImp implements IOrdenArticuloService {
     }
 
     @Override
-    public String crearOrdenArticulo(OrdenArticuloModel ordenArticulo) {
+    public String crearOrdenArticulo(ArticuloModelDTO ordenArticulo) {
 
+
+        List<ArticuloModel> articulos;
+
+        articulos = ordenArticulo.getIdArticulo();
 
         String textoRespuesta = "";
         try {
 
-            Integer idOrden = ordenArticulo.getIdOrden().getIdOrden();
-            Integer idArticulo = ordenArticulo.getIdArticulo().getIdArticulo();
-            Integer cantidad = ordenArticulo.getCantidad();
+            for(ArticuloModel i: articulos){
 
-            Optional<ArticuloModel> articuloOpcional = articuloRepository.findById(idArticulo);
+                if (i.getIdArticulo() == null ) {
 
-            ArticuloModel articulo = articuloOpcional.get();
+                    textoRespuesta = "El id del Articulo no puede ser nulo o estar vacio\n";
 
 
+                }
+                else if (i.getCantidad() == null ) {
+                    textoRespuesta = "La cantidad no puede ser nula o estar vacia\n";
+
+
+                }
+
+            }
             ordenesArticulosExistentes = this.ordenArticuloRepository.findAll();
 
+
             if (ordenesArticulosExistentes.isEmpty()) {
-                this.ordenArticuloRepository.save(ordenArticulo);
-                textoRespuesta = "La OrdenArticulo ha sido creada con éxito.";
+
+                Integer idArticulo = 0;
+                Integer cantidad = 0;
+                OrdenModel idOrden = ordenArticulo.getIdOrden();
+
+                if(articulos.size() == 1){
+
+                    OrdenArticuloModel objOA = new OrdenArticuloModel();
+                    for(int i=0; i < articulos.size(); i++){
+
+                        ArticuloModel objArticulo = articulos.get(i);
+                        idArticulo = objArticulo.getIdArticulo();
+                        cantidad = objArticulo.getCantidad();
+                        objOA.setIdArticulo(idArticulo);
+                        objOA.setIdOrden(idOrden);
+                        objOA.setCantidad(cantidad);
+                        this.ordenArticuloRepository.save(objOA);
+                        articuloService.actualizarCantidadEnBd(objOA, objArticulo);
+
+                        break;
+                    }
+                    textoRespuesta = "La OrdenArticulo ha sido creada con éxito.";
+
+                }else{
+
+
+                    for(int i=0; i< articulos.size(); i++){
+
+                        OrdenArticuloModel objOA = new OrdenArticuloModel();
+
+                        ArticuloModel objArticulo = articulos.get(i);
+
+                        idArticulo = objArticulo.getIdArticulo();
+                        cantidad = objArticulo.getCantidad();
+                        objOA.setIdArticulo(idArticulo);
+                        objOA.setIdOrden(idOrden);
+                        objOA.setCantidad(cantidad);
+                        this.ordenArticuloRepository.save(objOA);
+                        articuloService.actualizarCantidadEnBd(objOA, objArticulo);
+
+                    }
+                    textoRespuesta = "La OrdenArticulo ha sido creada con éxito.";
+
+
+
+                }
+
             } else {
+
+                OrdenModel idOrden = ordenArticulo.getIdOrden();
+
                 if (idOrden == null ) {
                     textoRespuesta += "El id de la Orden no puede ser nulo o estar vacio\n";
                 }
-                if (idArticulo == null ) {
-
-                    textoRespuesta += "El id del Articulo no puede ser nulo o estar vacio\n";
-
-                }
-                if (cantidad == null ) {
-                    textoRespuesta += "La cantidad no puede ser nula o estar vacia\n";
-
-                }
-                if (!textoRespuesta.isEmpty()) {
+                else if (!textoRespuesta.isEmpty()) {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+
                 }else {
-                    this.ordenArticuloRepository.save(ordenArticulo);
+                    Integer idArticulo = 0;
+                    Integer cantidad = 0;
+
+                    for(int i=0; i<articulos.size(); i++){
+
+                        OrdenArticuloModel objOA = new OrdenArticuloModel();
+                        ArticuloModel objArticulo = articulos.get(i);
+                        idArticulo = objArticulo.getIdArticulo();
+                        cantidad = objArticulo.getCantidad();
+                        objOA.setIdArticulo(idArticulo);
+                        objOA.setIdOrden(idOrden);
+                        objOA.setCantidad(cantidad);
+                        this.ordenArticuloRepository.save(objOA);
+                        articuloService.actualizarCantidadEnBd(objOA, objArticulo);
+
+
+                    }
+
                     textoRespuesta = "La OrdenArticulo ha sido creada con éxito.";
-                    articuloService.actualizarCantidadEnBd(ordenArticulo, articulo);
                 }
             }
         } catch (NullPointerException e) {

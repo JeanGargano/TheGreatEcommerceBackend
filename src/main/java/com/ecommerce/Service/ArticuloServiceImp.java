@@ -189,13 +189,24 @@ public class ArticuloServiceImp implements IArticuloService {
     @Override
     public String actualizarCantidadEnBd(OrdenArticuloModel ordenArticulo, ArticuloModel articulo) {
 
+        Integer idArticulo = articulo.getIdArticulo();
+
+        Optional<ArticuloModel> articuloEncontrado = ArticuloRepository.findById(idArticulo);
+
+        ArticuloModel objA = new ArticuloModel();
+
+
+        objA = articuloEncontrado.get();
+
+
+
         String textoRespuesta = "";
         int cantidadTotal = 0;
 
 
         try{
 
-            Integer cantidadArticulo = articulo.getCantidad();
+            Integer cantidadArticulo = objA.getCantidad();
             Integer cantidadOrden = ordenArticulo.getCantidad();
 
             if(cantidadArticulo <= 0){
@@ -204,8 +215,8 @@ public class ArticuloServiceImp implements IArticuloService {
                 textoRespuesta = "La cantidad de la orden no puede superar a la del articulo";
             }else{
                 cantidadTotal = cantidadArticulo - cantidadOrden;
-                articulo.setCantidad(cantidadTotal);
-                this.ArticuloRepository.save(articulo);
+                objA.setCantidad(cantidadTotal);
+                this.ArticuloRepository.save(objA);
                 textoRespuesta = "Se ha actualizado el proceso correctamente.";
             }
 
