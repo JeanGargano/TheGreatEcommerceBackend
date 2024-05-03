@@ -48,6 +48,7 @@ public class UsuarioController {
     @PostMapping("/login")
     public ResponseEntity<UsuarioModel> obtenerUsuarioPorCorreo(@RequestBody String correo,  String contrasenia){
         UsuarioModel usuario = usuarioService.verificarUsuario(correo, contrasenia);
+        System.out.print("Hola");
         return ResponseEntity.ok(usuario);
     }
 
