@@ -13,5 +13,5 @@ public interface IUsuarioService {
     Optional<UsuarioModel> obtenerUsuarioPorId(Integer idUsuario);
     String actualizarUsuarioPorId(UsuarioModel usuario, Integer idUsuario);
 
-    String verificarUsuario(String correo, String contraseña);
+    UsuarioModel verificarUsuario(String correo, String contraseña);
 }
