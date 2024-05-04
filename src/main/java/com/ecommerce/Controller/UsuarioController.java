@@ -53,5 +53,10 @@ public class UsuarioController {
         return ResponseEntity.ok(Optional.ofNullable(usuario));
     }
 
+    @GetMapping("/get/diseniadores")
+    public ResponseEntity<List<String>> listarDiseniadores(){
+        List<String> diseniadores = usuarioService.listarDiseniadores();
+        return new ResponseEntity<>(diseniadores, HttpStatus.OK);
+    }
 
 }

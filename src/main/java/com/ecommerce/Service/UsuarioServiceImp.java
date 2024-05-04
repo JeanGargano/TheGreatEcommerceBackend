@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -142,6 +143,19 @@ public class UsuarioServiceImp implements IUsuarioService {
         return usuarioRepository.findUsuarioModelByCorreo(correo)
                 .filter(usuarioEncontrado -> usuarioEncontrado.getContrasenia().equals(contrasenia));
 
+    }
+
+    @Override
+    public List<String> listarDiseniadores() {
+        List<UsuarioModel> usuarios = this.usuarioRepository.findAll();
+
+        // Filtrar los usuarios por diseñador
+        List<String> diseniadores = usuarios.stream()
+                .filter(usuario -> usuario.getRol() == TipoUsuario.Diseniador)
+                .map(UsuarioModel::getNombre)
+                .collect(Collectors.toList());
+        //js
+        return diseniadores;
     }
 
 }

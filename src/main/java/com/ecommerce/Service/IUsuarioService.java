@@ -15,4 +15,6 @@ public interface IUsuarioService {
     String actualizarUsuarioPorId(UsuarioModel usuario, Integer idUsuario);
 
     Optional<UsuarioModel> verificarUsuario(UsuarioModelDto usuarioDto);
+
+    List<String> listarDiseniadores();
 }
