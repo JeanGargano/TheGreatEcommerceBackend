@@ -1,14 +1,11 @@
 package com.ecommerce.Service;
 
 
-import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.Enums.TipoSexo;
 import com.ecommerce.Model.Enums.TipoUsuario;
-import com.ecommerce.Model.TallaModel;
+import com.ecommerce.Model.UsuarioDto;
 import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Repository.IUsuarioRepository;
-import com.ecommerce.exception.CamposInvalidosException;
-import com.ecommerce.exception.RecursoNoEncontradoException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
@@ -140,28 +136,11 @@ public class UsuarioServiceImp implements IUsuarioService {
     }
 
     @Override
-    public UsuarioModel verificarUsuario(String correo, String contrasenia) {
-        // Agregar log para depuración
-        System.out.println("Buscando usuario con correo: " + correo);
-
-        // Buscar el usuario por correo
-        Optional<UsuarioModel> usuarioEncontradoOptional = usuarioRepository.findUsuarioModelByCorreo(correo);
-        System.out.println("Usuario encontrado Optional: " + usuarioEncontradoOptional);
-
-        // Verificar si se encontró el usuario
-        if (usuarioEncontradoOptional.isPresent()) {
-            UsuarioModel usuarioEncontrado = usuarioEncontradoOptional.get();
-            System.out.println("Usuario encontrado: " + usuarioEncontrado.toString());
-
-            // Verificar la contraseña
-            if (!usuarioEncontrado.getContrasenia().equals(contrasenia)) {
-                throw new RecursoNoEncontradoException("La contraseña no coincide");
-            }
-
-            return usuarioEncontrado;
-        } else {
-            throw new RecursoNoEncontradoException("Usuario no encontrado con el correo especificado: " + correo);
-        }
+    public Optional<UsuarioModel> verificarUsuario(UsuarioDto usuarioDto) {
+        String correo = usuarioDto.getCorreo();
+        String contrasenia = usuarioDto.getContrasenia();
+        return usuarioRepository.findUsuarioModelByCorreo(correo)
+                .filter(usuarioEncontrado -> usuarioEncontrado.getContrasenia().equals(contrasenia));
     }
 
 }

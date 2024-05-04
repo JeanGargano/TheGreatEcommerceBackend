@@ -1,20 +1,16 @@
 package com.ecommerce.Controller;
 
 
-import com.ecommerce.Model.ArticuloDTO.ArticuloModelDTO;
-import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.OrdenModel;
-import com.ecommerce.Service.IArticuloService;
 import com.ecommerce.Service.IOrdenService;
-import com.ecommerce.Service.IUsuarioService;
 import com.ecommerce.exception.RecursoNoEncontradoException;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/orden")
@@ -48,6 +44,15 @@ public class OrdenController {
     public ResponseEntity<String> actualizarOrdenPorId(@RequestBody OrdenModel orden, @PathVariable Integer idOrden) {
         String resultado = this.ordenService.actualizarOrdenPorId(orden, idOrden);
         return ResponseEntity.ok(resultado);
+    }
+
+
+    @GetMapping("get/listarInformacion/{idOrden}")
+    public ResponseEntity<Optional<String>> getOrdenPorId(@RequestBody @PathVariable Integer idOrden) {
+
+        Optional<String> orden = this.ordenService.listarInformacion(idOrden)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Error! No se encontró la orden con el id " + idOrden)).describeConstable();
+        return ResponseEntity.ok(orden);
     }
 
 

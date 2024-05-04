@@ -33,6 +33,8 @@ public class ArticuloModel {
     @JoinColumn(name = "idTalla")
     private TallaModel idTalla;
 
+    //Hola
+
 
 
 

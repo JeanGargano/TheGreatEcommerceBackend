@@ -1,6 +1,7 @@
 package com.ecommerce.Controller;
 
 
+import com.ecommerce.Model.UsuarioDto;
 import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Service.IUsuarioService;
 import com.ecommerce.exception.RecursoNoEncontradoException;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuario")
@@ -46,10 +48,9 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UsuarioModel> obtenerUsuarioPorCorreo(@RequestBody String correo,  String contrasenia){
-        UsuarioModel usuario = usuarioService.verificarUsuario(correo, contrasenia);
-        System.out.print("Hola");
-        return ResponseEntity.ok(usuario);
+    public ResponseEntity<Optional<Optional<UsuarioModel>>> obtenerUsuarioPorCorreo(@RequestBody UsuarioDto usuarioDto){
+        Optional<UsuarioModel> usuario = usuarioService.verificarUsuario(usuarioDto);
+        return ResponseEntity.ok(Optional.ofNullable(usuario));
     }
 
 
