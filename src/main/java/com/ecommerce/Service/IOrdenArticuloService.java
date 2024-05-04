@@ -1,7 +1,7 @@
 package com.ecommerce.Service;
 
 
-import com.ecommerce.Model.ArticuloDTO.ArticuloModelDTO;
+import com.ecommerce.Model.Dto.ArticuloModelDTO;
 import com.ecommerce.Model.OrdenArticuloModel;
 
 import java.util.List;

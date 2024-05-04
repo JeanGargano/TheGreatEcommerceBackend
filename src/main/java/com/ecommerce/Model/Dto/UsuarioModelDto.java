@@ -1,5 +1,4 @@
-package com.ecommerce.Model;
-import jakarta.persistence.OneToMany;
+package com.ecommerce.Model.Dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsuarioDto {
+public class UsuarioModelDto {
 
     private String correo;
     private String contrasenia;

@@ -1,7 +1,7 @@
 package com.ecommerce.Service;
 
 
-import com.ecommerce.Model.UsuarioDto;
+import com.ecommerce.Model.Dto.UsuarioModelDto;
 import com.ecommerce.Model.UsuarioModel;
 
 import java.util.List;
@@ -14,5 +14,5 @@ public interface IUsuarioService {
     Optional<UsuarioModel> obtenerUsuarioPorId(Integer idUsuario);
     String actualizarUsuarioPorId(UsuarioModel usuario, Integer idUsuario);
 
-    Optional<UsuarioModel> verificarUsuario(UsuarioDto usuarioDto);
+    Optional<UsuarioModel> verificarUsuario(UsuarioModelDto usuarioDto);
 }

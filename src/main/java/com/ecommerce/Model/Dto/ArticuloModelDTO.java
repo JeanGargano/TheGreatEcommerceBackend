@@ -1,10 +1,7 @@
-package com.ecommerce.Model.ArticuloDTO;
+package com.ecommerce.Model.Dto;
 import java.util.List;
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.OrdenModel;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.ecommerce.Controller;
 
-import com.ecommerce.Model.ArticuloDTO.ArticuloModelDTO;
+import com.ecommerce.Model.Dto.ArticuloModelDTO;
 import com.ecommerce.Model.OrdenArticuloModel;
 import com.ecommerce.Service.IOrdenArticuloService;
 import com.ecommerce.exception.RecursoNoEncontradoException;

@@ -3,7 +3,7 @@ package com.ecommerce.Service;
 
 import com.ecommerce.Model.Enums.TipoSexo;
 import com.ecommerce.Model.Enums.TipoUsuario;
-import com.ecommerce.Model.UsuarioDto;
+import com.ecommerce.Model.Dto.UsuarioModelDto;
 import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Repository.IUsuarioRepository;
 import jakarta.annotation.PostConstruct;
@@ -136,11 +136,12 @@ public class UsuarioServiceImp implements IUsuarioService {
     }
 
     @Override
-    public Optional<UsuarioModel> verificarUsuario(UsuarioDto usuarioDto) {
+    public Optional<UsuarioModel> verificarUsuario(UsuarioModelDto usuarioDto) {
         String correo = usuarioDto.getCorreo();
         String contrasenia = usuarioDto.getContrasenia();
         return usuarioRepository.findUsuarioModelByCorreo(correo)
                 .filter(usuarioEncontrado -> usuarioEncontrado.getContrasenia().equals(contrasenia));
+
     }
 
 }

@@ -1,6 +1,6 @@
 package com.ecommerce.Service;
 
-import com.ecommerce.Model.ArticuloDTO.ArticuloModelDTO;
+import com.ecommerce.Model.Dto.ArticuloModelDTO;
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.OrdenArticuloModel;
 import com.ecommerce.Model.OrdenModel;
@@ -14,7 +14,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.io.UncheckedIOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

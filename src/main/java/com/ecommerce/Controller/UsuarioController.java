@@ -1,7 +1,7 @@
 package com.ecommerce.Controller;
 
 
-import com.ecommerce.Model.UsuarioDto;
+import com.ecommerce.Model.Dto.UsuarioModelDto;
 import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Service.IUsuarioService;
 import com.ecommerce.exception.RecursoNoEncontradoException;
@@ -48,7 +48,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Optional<Optional<UsuarioModel>>> obtenerUsuarioPorCorreo(@RequestBody UsuarioDto usuarioDto){
+    public ResponseEntity<Optional<Optional<UsuarioModel>>> obtenerUsuarioPorCorreo(@RequestBody UsuarioModelDto usuarioDto){
         Optional<UsuarioModel> usuario = usuarioService.verificarUsuario(usuarioDto);
         return ResponseEntity.ok(Optional.ofNullable(usuario));
     }

@@ -3,11 +3,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.ecommerce.Model.ArticuloDTO.ArticuloModelDTO;
-import org.hibernate.annotations.Any;
-import org.hibernate.annotations.ManyToAny;
-
-import java.util.List;
 
 @Entity
 @Table(name = "ordenarticulo")
