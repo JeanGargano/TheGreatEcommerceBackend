@@ -12,4 +12,6 @@ public interface ICiudadService {
     List<CiudadModel> listarCiudad();
     Optional<CiudadModel> obtenerCiudadPorId(Integer idCiudad);
     String actualizarCiudadPorId(CiudadModel ciudad, Integer idCiudad);
+
+    List<String> listarNombresCiudad();
 }

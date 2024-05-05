@@ -40,8 +40,14 @@ public class CiudadController {
 
 
     @PutMapping ("/put/{idCiudad}")
-    public ResponseEntity<String> actaulizarCiudadPorId(@RequestBody CiudadModel ciudad, @PathVariable Integer idCiudad) {
+    public ResponseEntity<String> actualizarCiudadPorId(@RequestBody CiudadModel ciudad, @PathVariable Integer idCiudad) {
         String resultado = this.ciudadService.actualizarCiudadPorId(ciudad, idCiudad);
         return ResponseEntity.ok(resultado);
+    }
+
+    @GetMapping("/get/ciudades")
+    public ResponseEntity<List<String>> listarNombresCiudad(){
+        List<String> ciudades = ciudadService.listarNombresCiudad();
+        return new ResponseEntity<>(ciudades, HttpStatus.OK);
     }
 }

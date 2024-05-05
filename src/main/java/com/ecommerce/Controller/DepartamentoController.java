@@ -46,4 +46,11 @@ public class DepartamentoController {
         return ResponseEntity.ok(resultado);
     }
 
+
+    @GetMapping("/get/departamentos")
+    public ResponseEntity<List<String>> listarNombresDepartamento(){
+        List<String> departamentos = departamentoService.listarNombresDepartamento();
+        return new ResponseEntity<>(departamentos, HttpStatus.OK);
+    }
+
 }

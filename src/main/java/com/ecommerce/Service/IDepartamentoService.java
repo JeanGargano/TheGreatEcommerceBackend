@@ -13,4 +13,6 @@ public interface IDepartamentoService {
     List<DepartamentoModel> listarDepartamento();
     Optional<DepartamentoModel> obtenerDepartamentoPorId(Integer idDepartamento);
     String actualizarDepartamentoPorId(DepartamentoModel departamento, Integer idDepartamento);
+
+    List<String> listarNombresDepartamento();
 }

@@ -154,7 +154,7 @@ public class UsuarioServiceImp implements IUsuarioService {
                 .filter(usuario -> usuario.getRol() == TipoUsuario.Diseniador)
                 .map(UsuarioModel::getNombre)
                 .collect(Collectors.toList());
-        //js
+
         return diseniadores;
     }
 

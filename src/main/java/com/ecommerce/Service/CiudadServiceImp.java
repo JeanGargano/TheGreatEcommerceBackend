@@ -2,8 +2,6 @@ package com.ecommerce.Service;
 
 
 
-import com.ecommerce.Model.ArticuloModel;
-import com.ecommerce.Model.CategoriaModel;
 import com.ecommerce.Model.CiudadModel;
 import com.ecommerce.Model.DepartamentoModel;
 import com.ecommerce.Repository.ICiudadRepository;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -125,5 +124,16 @@ public class CiudadServiceImp implements ICiudadService {
     }
 
 
+        @Override
+        public List<String> listarNombresCiudad() {
+        List<CiudadModel> ciudades = this.ciudadRepository.findAll();
+
+        // Ciudades por nombre
+        List<String> nombresC = ciudades.stream()
+                .map(CiudadModel::getNombre)
+                .collect(Collectors.toList());
+
+        return nombresC;
+    }
 
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -105,5 +106,19 @@ public class DepartamentoServiceImp implements IDepartamentoService{
 
         return textoRespuesta;
     }
+
+
+    @Override
+    public List<String> listarNombresDepartamento() {
+        List<DepartamentoModel> departamentos = this.departamentoRepository.findAll();
+
+        // Departamentos por nombre
+        List<String> nombresD = departamentos.stream()
+                .map(DepartamentoModel::getNombre)
+                .collect(Collectors.toList());
+
+        return nombresD;
     }
+
+}
 
