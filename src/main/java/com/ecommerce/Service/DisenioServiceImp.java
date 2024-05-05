@@ -2,6 +2,7 @@ package com.ecommerce.Service;
 
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.DisenioModel;
+import com.ecommerce.Model.Dto.DisenioDTO;
 import com.ecommerce.Model.Enums.Estado;
 import com.ecommerce.Model.PersonalizacionModel;
 import com.ecommerce.Model.UsuarioModel;
@@ -74,8 +75,35 @@ public class DisenioServiceImp implements IDisenioService{
     }
 
     @Override
-    public Optional<DisenioModel> obtenerDisenioPorId(Integer idDisenio) {
-        return this.disenioRepository.findById(idDisenio);
+    public Optional<DisenioDTO> obtenerDisenioPorId(Integer idDisenio) {
+
+
+        Integer idDiseño = 0;
+        Integer idUsuario = 0;
+        Estado estadoDiseño;
+        Integer idPersonalizacion = 0;
+
+        DisenioDTO objD = new DisenioDTO();
+
+        Optional<DisenioModel> DisenioEncontrado = this.disenioRepository.findById(idDisenio);
+
+        if(DisenioEncontrado.isPresent()){
+
+            idDiseño = DisenioEncontrado.get().getIdDisenio();
+            idUsuario = DisenioEncontrado.get().getIdUsuario().getIdUsuario();
+            estadoDiseño = DisenioEncontrado.get().getEstado();
+            idPersonalizacion = DisenioEncontrado.get().getIdPersonalizacion().getIdPersonalizacion();
+
+            objD.setIdDisenio(idDiseño);
+            objD.setIdUsuario(idUsuario);
+            objD.setEstado(estadoDiseño);
+            objD.setIdPersonalizacion(idPersonalizacion);
+
+            return Optional.of(objD);
+
+
+        }
+        return Optional.of(objD);
     }
 
     @Override

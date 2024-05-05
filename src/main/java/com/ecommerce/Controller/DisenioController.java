@@ -1,6 +1,7 @@
 package com.ecommerce.Controller;
 
 import com.ecommerce.Model.DisenioModel;
+import com.ecommerce.Model.Dto.DisenioDTO;
 import com.ecommerce.Service.IDisenioService;
 import com.ecommerce.exception.RecursoNoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,8 @@ public class DisenioController {
     }
 
     @GetMapping("/get/{idDisenio}")
-    public ResponseEntity<DisenioModel> buscarDisenioPorId(@RequestBody @PathVariable Integer idDisenio) {
-        DisenioModel disenio = this.disenioService.obtenerDisenioPorId(idDisenio)
+    public ResponseEntity<DisenioDTO> buscarDisenioPorId(@RequestBody @PathVariable Integer idDisenio) {
+        DisenioDTO disenio = this.disenioService.obtenerDisenioPorId(idDisenio)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Error! No se encontró el diseño con el id " + idDisenio));
         return ResponseEntity.ok(disenio);
     }
