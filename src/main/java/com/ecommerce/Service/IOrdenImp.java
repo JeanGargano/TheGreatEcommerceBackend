@@ -1,6 +1,7 @@
 package com.ecommerce.Service;
 
 import com.ecommerce.Model.*;
+import com.ecommerce.Model.Dto.EnvioDTO;
 import com.ecommerce.Repository.IEnvioRepository;
 import com.ecommerce.Repository.IOrdenArticuloRepository;
 import com.ecommerce.Repository.IOrdenRepository;
@@ -48,10 +49,28 @@ public class IOrdenImp implements IOrdenService {
             Double valorTotal = orden.getValorTotal();
             UsuarioModel idUsuario = orden.getIdUsuario();
 
+            // Datos Envio
+
+            EnvioDTO envio = orden.getEnvio();
+
+            String direccion = envio.getDireccion();
+            DepartamentoModel idDepartamento = envio.getIdDepartamento();
+            String tipoEntrega = envio.getTipoEntrega();
+            OrdenModel idOrden = envio.getIdOrden();
+
             ordenesExistentes = this.ordenRepository.findAll();
 
             if (ordenesExistentes.isEmpty()) {
+
+                EnvioModel objE = new EnvioModel();
+
+                objE.setDireccion(direccion);
+                objE.setIdDepartamento(idDepartamento);
+                objE.setTipoEntrega(tipoEntrega);
+                objE.setIdOrden(idOrden);
                 this.ordenRepository.save(orden);
+                this.envioRepository.save(objE);
+
                 textoRespuesta = "La orden ha sido creada con éxito.";
             } else {
                 if (fecha == null || fecha.isBlank()) {
@@ -67,7 +86,15 @@ public class IOrdenImp implements IOrdenService {
                 if (!textoRespuesta.isEmpty()) {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
                 } else {
+
+                    EnvioModel objE = new EnvioModel();
+
+                    objE.setDireccion(direccion);
+                    objE.setIdDepartamento(idDepartamento);
+                    objE.setTipoEntrega(tipoEntrega);
+                    objE.setIdOrden(idOrden);
                     this.ordenRepository.save(orden);
+                    this.envioRepository.save(objE);
                     textoRespuesta = "La orden ha sido creada con éxito.";
 
 
@@ -78,6 +105,8 @@ public class IOrdenImp implements IOrdenService {
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
+            System.out.println(orden.toString());
+            System.out.println("Message error:" + e.getLocalizedMessage());
             textoRespuesta += "verifique que el usuario este creado en la base de datos\n";
         }
         return textoRespuesta;

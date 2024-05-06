@@ -1,9 +1,13 @@
 package com.ecommerce.Model;
 
+import com.ecommerce.Model.Dto.EnvioDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Any;
+import org.hibernate.annotations.ManyToAny;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Entity
@@ -24,6 +28,7 @@ public class OrdenModel {
     @JoinColumn(name = "idUsuario")
     private UsuarioModel idUsuario;
 
-
+    @Transient
+    private EnvioDTO envio;
 
 }
