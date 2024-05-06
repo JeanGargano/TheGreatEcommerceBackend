@@ -1,9 +1,8 @@
 package com.ecommerce.Service;
 
 import com.ecommerce.Model.ArticuloModel;
-import com.ecommerce.Model.OrdenArticuloModel;
+import com.ecommerce.Model.OrdenModel;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,7 @@ public interface IArticuloService {
 
     List<ArticuloModel> obtenerPorCategoria(String nombreCategoria);
 
-    String actualizarCantidadEnBd(OrdenArticuloModel ordenArticulo, ArticuloModel articulo);
+    String actualizarCantidadEnBd(OrdenModel ordenArticulo, ArticuloModel articulo);
 }
 
 

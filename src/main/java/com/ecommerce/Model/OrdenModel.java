@@ -28,6 +28,12 @@ public class OrdenModel {
 
     private String tipoEntrega;
 
+    @JoinColumn(name = "idArticulo")
+    private Integer idArticulo;
+
+    @JoinColumn(name = "cantidad")
+    private Integer cantidad;
+
     @ManyToOne
     @JoinColumn(name = "idUsuario")
     private UsuarioModel idUsuario;

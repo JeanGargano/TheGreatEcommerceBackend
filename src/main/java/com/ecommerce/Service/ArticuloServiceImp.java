@@ -1,9 +1,6 @@
 package com.ecommerce.Service;
 
-import com.ecommerce.Model.ArticuloModel;
-import com.ecommerce.Model.CategoriaModel;
-import com.ecommerce.Model.OrdenArticuloModel;
-import com.ecommerce.Model.TallaModel;
+import com.ecommerce.Model.*;
 import com.ecommerce.Repository.IArticuloRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -187,18 +184,14 @@ public class ArticuloServiceImp implements IArticuloService {
         }
 
     @Override
-    public String actualizarCantidadEnBd(OrdenArticuloModel ordenArticulo, ArticuloModel articulo) {
+    public String actualizarCantidadEnBd(OrdenModel ordenArticulo, ArticuloModel articulo) {
 
         Integer idArticulo = articulo.getIdArticulo();
 
         Optional<ArticuloModel> articuloEncontrado = ArticuloRepository.findById(idArticulo);
 
         ArticuloModel objA = new ArticuloModel();
-
-
         objA = articuloEncontrado.get();
-
-
 
         String textoRespuesta = "";
         int cantidadTotal = 0;
@@ -214,6 +207,7 @@ public class ArticuloServiceImp implements IArticuloService {
             }else if(cantidadOrden > cantidadArticulo){
                 textoRespuesta = "La cantidad de la orden no puede superar a la del articulo";
             }else{
+
                 cantidadTotal = cantidadArticulo - cantidadOrden;
                 objA.setCantidad(cantidadTotal);
                 this.ArticuloRepository.save(objA);

@@ -1,7 +1,7 @@
 package com.ecommerce.Service;
 
 import com.ecommerce.Model.*;
-import com.ecommerce.Repository.IOrdenArticuloRepository;
+import com.ecommerce.Model.Dto.OrdenModelDTO;
 import com.ecommerce.Repository.IOrdenRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -24,7 +24,7 @@ public class IOrdenImp implements IOrdenService {
     IOrdenRepository ordenRepository;
 
     @Autowired
-    IOrdenArticuloRepository ordenArticuloRepository;
+    IArticuloService articuloService;
 
     private List<OrdenModel> ordenesExistentes; // Se crea para mantener actualizado los datos entre bd y api
 
@@ -37,15 +37,35 @@ public class IOrdenImp implements IOrdenService {
     }
 
     @Override
-    public String crearOrden(OrdenModel orden) {
+    public String crearOrden(OrdenModelDTO orden) {
+
+        List<ArticuloModel> articulos;
+
+        articulos = orden.getIdArticulo();
 
         String textoRespuesta = "";
         try {
 
+            for(ArticuloModel i: articulos){
+
+                if (i.getIdArticulo() == null ) {
+
+                    textoRespuesta = "El id del Articulo no puede ser nulo o estar vacio\n";
+
+
+                }
+                else if (i.getCantidad() == null ) {
+                    textoRespuesta = "La cantidad no puede ser nula o estar vacia\n";
+
+
+                }
+
+            }
+
             String fecha = orden.getFecha();
             Double valorTotal = orden.getValorTotal();
             String direccion = orden.getDireccion();
-            Integer idDepartamento = orden.getIdDepartamento().getIdDepartamento();
+            DepartamentoModel idDepartamento = orden.getIdDepartamento();
             String tipoEntrega = orden.getTipoEntrega();
             UsuarioModel idUsuario = orden.getIdUsuario();
 
@@ -54,9 +74,68 @@ public class IOrdenImp implements IOrdenService {
 
             if (ordenesExistentes.isEmpty()) {
 
-                this.ordenRepository.save(orden);
+                Integer idArticulo = 0;
+                Integer cantidad = 0;
 
-                textoRespuesta = "La orden ha sido creada con éxito.";
+
+
+                if(articulos.size() == 1) {
+
+
+                    OrdenModel objO = new OrdenModel();
+
+                    objO.setFecha(fecha);
+                    objO.setValorTotal(valorTotal);
+                    objO.setDireccion(direccion);
+                    objO.setIdDepartamento(idDepartamento);
+                    objO.setTipoEntrega(tipoEntrega);
+                    objO.setIdUsuario(idUsuario);
+
+                    for (int i = 0; i < articulos.size(); i++) {
+
+                        ArticuloModel objArticulo = articulos.get(i);
+                        idArticulo = objArticulo.getIdArticulo();
+                        cantidad = objArticulo.getCantidad();
+
+                        objO.setIdArticulo(idArticulo);
+                        objO.setCantidad(cantidad);
+
+                        this.ordenRepository.save(objO);
+                        this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
+
+                        break;
+                    }
+                    textoRespuesta = "La orden ha sido creada con éxito.";
+                }else if(articulos.size() == 0){
+                    textoRespuesta += "Articulos no seleccionados.";
+                }else{
+
+
+
+                    for (int i = 0; i < articulos.size(); i++) {
+
+                        OrdenModel objO = new OrdenModel();
+
+                        ArticuloModel objArticulo = articulos.get(i);
+                        idArticulo = objArticulo.getIdArticulo();
+                        cantidad = objArticulo.getCantidad();
+
+                        objO.setIdArticulo(idArticulo);
+                        objO.setCantidad(cantidad);
+                        objO.setFecha(fecha);
+                        objO.setValorTotal(valorTotal);
+                        objO.setDireccion(direccion);
+                        objO.setIdDepartamento(idDepartamento);
+                        objO.setTipoEntrega(tipoEntrega);
+                        objO.setIdUsuario(idUsuario);
+                        this.ordenRepository.save(objO);
+                        this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
+
+
+                    }
+                    textoRespuesta = "La orden ha sido creada con éxito.";
+
+                }
             } else {
                 if (fecha == null || fecha.isBlank()) {
                     textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
@@ -81,16 +160,72 @@ public class IOrdenImp implements IOrdenService {
                 if (!textoRespuesta.isEmpty()) {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
                 } else {
+                    Integer idArticulo = 0;
+                    Integer cantidad = 0;
+
+                    if(articulos.size() == 1) {
 
 
-                    this.ordenRepository.save(orden);
-                    textoRespuesta = "La orden ha sido creada con éxito.";
+                        OrdenModel objO = new OrdenModel();
 
+                        objO.setFecha(fecha);
+                        objO.setValorTotal(valorTotal);
+                        objO.setDireccion(direccion);
+                        objO.setIdDepartamento(idDepartamento);
+                        objO.setTipoEntrega(tipoEntrega);
+                        objO.setIdUsuario(idUsuario);
+
+                        for (int i = 0; i < articulos.size(); i++) {
+
+                            ArticuloModel objArticulo = articulos.get(i);
+                            idArticulo = objArticulo.getIdArticulo();
+                            cantidad = objArticulo.getCantidad();
+
+                            objO.setIdArticulo(idArticulo);
+                            objO.setCantidad(cantidad);
+
+                            this.ordenRepository.save(objO);
+                            this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
+
+                            break;
+                        }
+                        textoRespuesta = "La orden ha sido creada con éxito.";
+                    }else if(articulos.size() == 0){
+                        textoRespuesta += "Articulos no seleccionados.";
+                    }else{
+
+
+
+                        for (int i = 0; i < articulos.size(); i++) {
+
+                            OrdenModel objO = new OrdenModel();
+
+                            ArticuloModel objArticulo = articulos.get(i);
+                            idArticulo = objArticulo.getIdArticulo();
+                            cantidad = objArticulo.getCantidad();
+                            System.out.println("la cantidad es" + cantidad);
+                            objO.setIdArticulo(idArticulo);
+                            objO.setCantidad(cantidad);
+                            objO.setFecha(fecha);
+                            objO.setValorTotal(valorTotal);
+                            objO.setDireccion(direccion);
+                            objO.setIdDepartamento(idDepartamento);
+                            objO.setTipoEntrega(tipoEntrega);
+                            objO.setIdUsuario(idUsuario);
+                            this.ordenRepository.save(objO);
+                            this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
+
+
+                        }
+                        textoRespuesta = "La orden ha sido creada con éxito.";
+
+                    }
 
                 }
             }
         } catch (NullPointerException e) {
             textoRespuesta += "Algún objeto es nulo\n";
+
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {

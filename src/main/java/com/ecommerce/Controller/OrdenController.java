@@ -1,6 +1,7 @@
 package com.ecommerce.Controller;
 
 
+import com.ecommerce.Model.Dto.OrdenModelDTO;
 import com.ecommerce.Model.OrdenModel;
 import com.ecommerce.Service.IOrdenService;
 import com.ecommerce.exception.RecursoNoEncontradoException;
@@ -20,7 +21,7 @@ public class OrdenController {
     IOrdenService ordenService;
 
     @PostMapping("/save")
-    public ResponseEntity<String> crearOrden(@RequestBody OrdenModel orden) {
+    public ResponseEntity<String> crearOrden(@RequestBody OrdenModelDTO orden) {
         String resultadoHttp = ordenService.crearOrden(orden);
         return new ResponseEntity<String>(resultadoHttp, HttpStatus.OK);
     }
