@@ -1,8 +1,6 @@
 package com.ecommerce.Service;
 
 import com.ecommerce.Model.*;
-import com.ecommerce.Model.Dto.EnvioDTO;
-import com.ecommerce.Repository.IEnvioRepository;
 import com.ecommerce.Repository.IOrdenArticuloRepository;
 import com.ecommerce.Repository.IOrdenRepository;
 import jakarta.annotation.PostConstruct;
@@ -24,8 +22,7 @@ public class IOrdenImp implements IOrdenService {
 
     @Autowired
     IOrdenRepository ordenRepository;
-    @Autowired
-    IEnvioRepository envioRepository;
+
     @Autowired
     IOrdenArticuloRepository ordenArticuloRepository;
 
@@ -47,29 +44,17 @@ public class IOrdenImp implements IOrdenService {
 
             String fecha = orden.getFecha();
             Double valorTotal = orden.getValorTotal();
+            String direccion = orden.getDireccion();
+            Integer idDepartamento = orden.getIdDepartamento().getIdDepartamento();
+            String tipoEntrega = orden.getTipoEntrega();
             UsuarioModel idUsuario = orden.getIdUsuario();
 
-            // Datos Envio
-
-            EnvioDTO envio = orden.getEnvio();
-
-            String direccion = envio.getDireccion();
-            DepartamentoModel idDepartamento = envio.getIdDepartamento();
-            String tipoEntrega = envio.getTipoEntrega();
-            OrdenModel idOrden = envio.getIdOrden();
 
             ordenesExistentes = this.ordenRepository.findAll();
 
             if (ordenesExistentes.isEmpty()) {
 
-                EnvioModel objE = new EnvioModel();
-
-                objE.setDireccion(direccion);
-                objE.setIdDepartamento(idDepartamento);
-                objE.setTipoEntrega(tipoEntrega);
-                objE.setIdOrden(idOrden);
                 this.ordenRepository.save(orden);
-                this.envioRepository.save(objE);
 
                 textoRespuesta = "La orden ha sido creada con éxito.";
             } else {
@@ -77,8 +62,18 @@ public class IOrdenImp implements IOrdenService {
                     textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
                 }
                 if (valorTotal == null) {
-                    textoRespuesta += "El Valor Totalno puede ser nulo o estar vacio\n";
+                    textoRespuesta += "El Valor Total no puede ser nulo o estar vacio\n";
 
+                }if (direccion == null || direccion.isBlank()){
+
+                    textoRespuesta += "La dirección no puede estar vacia, verifique.";
+                }if(idDepartamento == null){
+
+                    textoRespuesta += "La id Del departamento no puede ser nula";
+
+                }if(tipoEntrega == null || tipoEntrega.isBlank()){
+
+                    textoRespuesta += "El tipo de entrega no puede estar vacio";
                 }
                 if (idUsuario == null) {
                     textoRespuesta += "El id de Usuario no puede ser nulo o estar vacio\n";
@@ -87,14 +82,8 @@ public class IOrdenImp implements IOrdenService {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
                 } else {
 
-                    EnvioModel objE = new EnvioModel();
 
-                    objE.setDireccion(direccion);
-                    objE.setIdDepartamento(idDepartamento);
-                    objE.setTipoEntrega(tipoEntrega);
-                    objE.setIdOrden(idOrden);
                     this.ordenRepository.save(orden);
-                    this.envioRepository.save(objE);
                     textoRespuesta = "La orden ha sido creada con éxito.";
 
 
@@ -161,7 +150,6 @@ public class IOrdenImp implements IOrdenService {
 
         String textoRespuesta = "";
         //Optional<OrdenArticuloModel> ordenArticulo = this.ordenArticuloRepository.findById(idOrden);
-        Optional<EnvioModel> envioEncontrado = this.envioRepository.findById(idOrden);
         Optional<OrdenModel>  ordenEncontrada = this.ordenRepository.findById(idOrden);
         if (ordenEncontrada.isPresent()) {
 
@@ -169,8 +157,8 @@ public class IOrdenImp implements IOrdenService {
             Double valorTotal = ordenEncontrada.get().getValorTotal();
             String nombreCliente = ordenEncontrada.get().getIdUsuario().getNombre();
             Integer identificacion = ordenEncontrada.get().getIdUsuario().getIdentificacion();
-            String direccion = envioEncontrado.get().getDireccion();
-            String tipoEntrega = envioEncontrado.get().getTipoEntrega();
+            String direccion = ordenEncontrada.get().getDireccion();
+            String tipoEntrega = ordenEncontrada.get().getTipoEntrega();
             textoRespuesta = "Fecha: " + fecha + "\n" +
                     "Valor: " + valorTotal + "\n" +
                     "Nombre: " + nombreCliente + "\n" +
