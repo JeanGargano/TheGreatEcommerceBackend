@@ -3,6 +3,7 @@ package com.ecommerce.Service;
 import com.ecommerce.Model.*;
 import com.ecommerce.Model.Dto.OrdenModelDTO;
 import com.ecommerce.Repository.IOrdenRepository;
+import com.ecommerce.exception.RecursoNoEncontradoException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +71,27 @@ public class IOrdenImp implements IOrdenService {
             String tipoEntrega = orden.getTipoEntrega();
             UsuarioModel idUsuario = orden.getIdUsuario();
 
+            if (fecha == null || fecha.isBlank()) {
+                textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
+            }
+            if (valorTotal == null) {
+                textoRespuesta += "El Valor Total no puede ser nulo o estar vacio\n";
+
+            }if (direccion == null || direccion.isBlank()){
+
+                textoRespuesta += "La dirección no puede estar vacia, verifique.";
+            }if(idDepartamento == null){
+
+                textoRespuesta += "La id Del departamento no puede ser nula";
+
+            }if(tipoEntrega == null || tipoEntrega.isBlank()){
+
+                textoRespuesta += "El tipo de entrega no puede estar vacio";
+            }
+            if (idUsuario == null) {
+                textoRespuesta += "El id de Usuario no puede ser nulo o estar vacio\n";
+            }
+
 
             ordenesExistentes = this.ordenRepository.findAll();
 
@@ -99,9 +122,9 @@ public class IOrdenImp implements IOrdenService {
 
                         objO.setIdArticulo(idArticulo);
                         objO.setCantidad(cantidad);
-
-                        this.ordenRepository.save(objO);
                         this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
+                        this.ordenRepository.save(objO);
+
 
                         break;
                     }
@@ -128,8 +151,9 @@ public class IOrdenImp implements IOrdenService {
                         objO.setIdDepartamento(idDepartamento);
                         objO.setTipoEntrega(tipoEntrega);
                         objO.setIdUsuario(idUsuario);
-                        this.ordenRepository.save(objO);
                         this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
+                        this.ordenRepository.save(objO);
+
 
 
                     }
@@ -137,26 +161,6 @@ public class IOrdenImp implements IOrdenService {
 
                 }
             } else {
-                if (fecha == null || fecha.isBlank()) {
-                    textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
-                }
-                if (valorTotal == null) {
-                    textoRespuesta += "El Valor Total no puede ser nulo o estar vacio\n";
-
-                }if (direccion == null || direccion.isBlank()){
-
-                    textoRespuesta += "La dirección no puede estar vacia, verifique.";
-                }if(idDepartamento == null){
-
-                    textoRespuesta += "La id Del departamento no puede ser nula";
-
-                }if(tipoEntrega == null || tipoEntrega.isBlank()){
-
-                    textoRespuesta += "El tipo de entrega no puede estar vacio";
-                }
-                if (idUsuario == null) {
-                    textoRespuesta += "El id de Usuario no puede ser nulo o estar vacio\n";
-                }
                 if (!textoRespuesta.isEmpty()) {
                     textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
                 } else {
@@ -183,9 +187,9 @@ public class IOrdenImp implements IOrdenService {
 
                             objO.setIdArticulo(idArticulo);
                             objO.setCantidad(cantidad);
-
-                            this.ordenRepository.save(objO);
                             this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
+                            this.ordenRepository.save(objO);
+
 
                             break;
                         }
@@ -212,8 +216,9 @@ public class IOrdenImp implements IOrdenService {
                             objO.setIdDepartamento(idDepartamento);
                             objO.setTipoEntrega(tipoEntrega);
                             objO.setIdUsuario(idUsuario);
-                            this.ordenRepository.save(objO);
                             this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
+                            this.ordenRepository.save(objO);
+
 
 
                         }
@@ -284,7 +289,7 @@ public class IOrdenImp implements IOrdenService {
     public Optional<String> listarInformacion(Integer idOrden) {
 
         String textoRespuesta = "";
-        //Optional<OrdenArticuloModel> ordenArticulo = this.ordenArticuloRepository.findById(idOrden);
+
         Optional<OrdenModel>  ordenEncontrada = this.ordenRepository.findById(idOrden);
         if (ordenEncontrada.isPresent()) {
 
@@ -306,5 +311,17 @@ public class IOrdenImp implements IOrdenService {
 
 
     }
+
+    @Override
+    public List<OrdenModel> ordenarOrden(){
+
+
+        List<OrdenModel> ordenesEncontrada = ordenRepository.findAll();
+
+
+        ordenesEncontrada.sort((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()));
+
+        return ordenesEncontrada;
+    };
 
 }

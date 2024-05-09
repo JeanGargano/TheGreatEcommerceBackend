@@ -196,13 +196,17 @@ public class ArticuloServiceImp implements IArticuloService {
         String textoRespuesta = "";
         int cantidadTotal = 0;
 
+        Integer cantidadArticulo = 0;
+        Integer cantidadOrden = 0;
+
 
         try{
 
-            Integer cantidadArticulo = objA.getCantidad();
-            Integer cantidadOrden = ordenArticulo.getCantidad();
+            cantidadArticulo = objA.getCantidad();
+            cantidadOrden = ordenArticulo.getCantidad();
 
-            if(cantidadArticulo <= 0){
+            System.out.println("la Cantidad recuperada es:" + cantidadArticulo);
+            if(cantidadArticulo == 0  || cantidadArticulo < 0){
                 textoRespuesta = "No hay stock disponble para el articulo. ";
             }else if(cantidadOrden > cantidadArticulo){
                 textoRespuesta = "La cantidad de la orden no puede superar a la del articulo";

@@ -56,5 +56,12 @@ public class OrdenController {
         return ResponseEntity.ok(orden);
     }
 
+    @GetMapping("/get/paginarOrden")
+    public ResponseEntity<List<OrdenModel>> getOrdenOrdenadas(){
+
+        List<OrdenModel> ordenArreglo = ordenService.ordenarOrden();
+        return new ResponseEntity<>(ordenArreglo,HttpStatus.OK);
+    }
+
 
 }

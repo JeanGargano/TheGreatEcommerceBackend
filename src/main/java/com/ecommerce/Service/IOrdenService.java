@@ -15,4 +15,6 @@ public interface IOrdenService {
     String actualizarOrdenPorId(OrdenModel orden, Integer idOrden);
 
     Optional<String> listarInformacion(Integer idOrden);
+
+    List<OrdenModel> ordenarOrden();
 }
