@@ -1,5 +1,6 @@
 package com.ecommerce.Model;
 
+import com.ecommerce.Model.Enums.Estado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,6 +38,10 @@ public class OrdenModel {
     @ManyToOne
     @JoinColumn(name = "idUsuario")
     private UsuarioModel idUsuario;
+
+    @Column(name = "estado")
+    @Enumerated(EnumType.STRING)
+    private Estado estado;
 
 
 

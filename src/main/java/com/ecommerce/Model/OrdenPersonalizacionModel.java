@@ -1,6 +1,5 @@
 package com.ecommerce.Model;
 
-import com.ecommerce.Model.Enums.EstadoPersonalizacion;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,8 +25,6 @@ public class OrdenPersonalizacionModel {
     @JoinColumn(name = "idPersonalizacion")
     private PersonalizacionModel idPersonalizacion;
 
-    @Column(name = "estado")
-    @Enumerated(EnumType.STRING)
-    private EstadoPersonalizacion estado;
+
     private String reciboPago;
 }

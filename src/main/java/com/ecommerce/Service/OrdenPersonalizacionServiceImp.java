@@ -1,7 +1,6 @@
 package com.ecommerce.Service;
 
 import com.ecommerce.Model.*;
-import com.ecommerce.Model.Enums.EstadoPersonalizacion;
 import com.ecommerce.Repository.IOrdenPersonalizacionRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -40,7 +39,6 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
         try {
             OrdenModel idOrden = ordenPersonalizacion.getIdOrden();
             PersonalizacionModel idPersonalizacion = ordenPersonalizacion.getIdPersonalizacion();
-            EstadoPersonalizacion estado = ordenPersonalizacion.getEstado();
             String reciboPAGO = ordenPersonalizacion.getReciboPago();
 
             ordenesPersonalizacionesExistentes = this.ordenPersonalizacionRepository.findAll();
@@ -54,10 +52,6 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
                 }
                 if (idPersonalizacion == null) {
                     textoRespuesta += "El id de la personalizacion no puede ser nulo\n";
-                }
-                if (estado == null) {
-                    textoRespuesta += "El estado no puede ser nulo, recuerde escribir Produccion o finalizada\n";
-
                 }
                 if (reciboPAGO == null || reciboPAGO.isBlank()) {
                     textoRespuesta += "El recibo de pago no puede ser nulo, recuerde adjuntar una imagen\n";
