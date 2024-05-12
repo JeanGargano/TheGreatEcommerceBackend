@@ -50,35 +50,38 @@ public class UsuarioServiceImp implements IUsuarioService {
 
             usuariosExistentes = this.usuarioRepository.findAll();
 
-            if (usuariosExistentes.isEmpty()) {
-                this.usuarioRepository.save(usuario);
-                textoRespuesta = "El usuario ha sido creado con éxito.";
-            } else {
-                if (nombre == null || nombre.isBlank()) {
-                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
-                }
-                if (telefono == null ) {
-                    textoRespuesta += "su telefono no puede ser null\n";
-                }
-                if (correo == null || correo.isBlank()) {
-                    textoRespuesta += "El correo no puede ser nulo o estar vacio\n";
-                }
-                if (rol == null ) {
-                    textoRespuesta += "El rol no puede ser null\n";
-                }
-                if (sexo == null ) {
-                    textoRespuesta += "El sexo no puede ser null\n";
-                }
-                if (identificacion == null ) {
-                    textoRespuesta += "La identificacion no puede ser null\n";
-                }
-                if (!textoRespuesta.isEmpty()) {
-                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
-                } else {
+            if (nombre == null || nombre.isBlank()) {
+                textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+            }
+            if (telefono == null || telefono < 0) {
+                textoRespuesta += "su telefono no puede ser null ó menor a 0\n";
+            }
+            if (correo == null || correo.isBlank() || correo.indexOf('@') == -1) {
+                textoRespuesta += "El correo no puede ser nulo o estar vacio, además verifique si contiene '@'\n";
+            }
+            if (rol == null ) {
+                textoRespuesta += "El rol no puede ser null\n";
+            }
+            if (sexo == null ) {
+                textoRespuesta += "El sexo no puede ser null\n";
+            }
+            if (identificacion == null || identificacion < 0) {
+                textoRespuesta += "La identificacion no puede ser null ó ser menor a 0\n";
+            }
+            if (!textoRespuesta.isEmpty()) {
+                textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+            }else {
+
+                if (usuariosExistentes.isEmpty()) {
                     this.usuarioRepository.save(usuario);
                     textoRespuesta = "El usuario ha sido creado con éxito.";
+                }else{
+                        this.usuarioRepository.save(usuario);
+                        textoRespuesta = "El usuario ha sido creado con éxito.";
                 }
             }
+
+
         } catch (NullPointerException e) {
             textoRespuesta += "Algún objeto es null\n";
         } catch (UncheckedIOException e) {

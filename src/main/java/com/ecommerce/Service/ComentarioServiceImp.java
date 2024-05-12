@@ -44,22 +44,22 @@ public class ComentarioServiceImp implements IComentarioService {
 
             comentariosExistentes = this.comentarioRepository.findAll();
 
-            if (comentariosExistentes.isEmpty()) {
-                this.comentarioRepository.save(comentario);
-                textoRespuesta = "El comentario ha sido creado con éxito.";
-            } else {
-                if (descripcion == null || descripcion.isBlank()) {
-                    textoRespuesta += "La descripcion no puede estar vacia o ser null\n";
-                }
-                if (fecha == null || fecha.isBlank()) {
-                    textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
-                }
-                if (idUsuario == null) {
-                    textoRespuesta += "El id de su usuario no puede ser null\n";
-                }
-                if (!textoRespuesta.isEmpty()) {
-                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
-                } else {
+            if (descripcion == null || descripcion.isBlank()) {
+                textoRespuesta += "La descripcion no puede estar vacia o ser null\n";
+            }
+            if (fecha == null || fecha.isBlank()) {
+                textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
+            }
+            if (idUsuario == null) {
+                textoRespuesta += "El id de su usuario no puede ser null\n";
+            }
+            if (!textoRespuesta.isEmpty()) {
+                textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+            }else{
+                if (comentariosExistentes.isEmpty()) {
+                    this.comentarioRepository.save(comentario);
+                    textoRespuesta = "El comentario ha sido creado con éxito.";
+                }else {
                     this.comentarioRepository.save(comentario);
                     textoRespuesta = "El comentario ha sido creado con éxito.";
                 }

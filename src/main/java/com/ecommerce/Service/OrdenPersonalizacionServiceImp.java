@@ -43,22 +43,23 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
 
             ordenesPersonalizacionesExistentes = this.ordenPersonalizacionRepository.findAll();
 
-            if (ordenesPersonalizacionesExistentes.isEmpty()) {
-                this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
-                textoRespuesta = "La orden de personalizacion ha sido creado con éxito.";
-            } else {
-                if (idOrden == null) {
-                    textoRespuesta += "el id de la orden no puede ser nulo\n";
-                }
-                if (idPersonalizacion == null) {
-                    textoRespuesta += "El id de la personalizacion no puede ser nulo\n";
-                }
-                if (reciboPAGO == null || reciboPAGO.isBlank()) {
-                    textoRespuesta += "El recibo de pago no puede ser nulo, recuerde adjuntar una imagen\n";
-                }
-                if (!textoRespuesta.isEmpty()) {
-                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";}
-                else {
+            if (idOrden == null) {
+                textoRespuesta += "el id de la orden no puede ser nulo\n";
+            }
+            if (idPersonalizacion == null) {
+                textoRespuesta += "El id de la personalizacion no puede ser nulo\n";
+            }
+            if (reciboPAGO == null || reciboPAGO.isBlank()) {
+                textoRespuesta += "El recibo de pago no puede ser nulo, recuerde adjuntar una imagen\n";
+            }
+            if (!textoRespuesta.isEmpty()) {
+                textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+            }else{
+
+                if (ordenesPersonalizacionesExistentes.isEmpty()) {
+                    this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
+                    textoRespuesta = "La orden de personalizacion ha sido creado con éxito.";
+                }else {
                     this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
                     textoRespuesta = "La orden de personalizacion ha sido creada con exito.";
                 }

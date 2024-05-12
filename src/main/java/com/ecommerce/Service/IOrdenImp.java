@@ -50,14 +50,14 @@ public class IOrdenImp implements IOrdenService {
 
             for(ArticuloModel i: articulos){
 
-                if (i.getIdArticulo() == null ) {
+                if (i.getIdArticulo() == null || i.getIdArticulo() < 0) {
 
-                    textoRespuesta = "El id del Articulo no puede ser nulo o estar vacio\n";
+                    textoRespuesta = "El id del Articulo no puede ser nulo ó ser menor a 0\n";
 
 
                 }
-                else if (i.getCantidad() == null ) {
-                    textoRespuesta = "La cantidad no puede ser nula o estar vacia\n";
+                else if (i.getCantidad() == null || i.getCantidad() < 0) {
+                    textoRespuesta = "La cantidad no puede ser nula ó menor a 0\n";
 
 
                 }
@@ -74,13 +74,13 @@ public class IOrdenImp implements IOrdenService {
             if (fecha == null || fecha.isBlank()) {
                 textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
             }
-            if (valorTotal == null) {
+            if (valorTotal == null || valorTotal < 0) {
                 textoRespuesta += "El Valor Total no puede ser nulo o estar vacio\n";
 
             }if (direccion == null || direccion.isBlank()){
 
                 textoRespuesta += "La dirección no puede estar vacia, verifique.";
-            }if(idDepartamento == null){
+            }if(idDepartamento == null || idDepartamento.getIdDepartamento() < 0){
 
                 textoRespuesta += "La id Del departamento no puede ser nula";
 

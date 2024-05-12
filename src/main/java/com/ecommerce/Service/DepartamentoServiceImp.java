@@ -40,16 +40,17 @@ public class DepartamentoServiceImp implements IDepartamentoService{
 
             departamentosExistentes = this.departamentoRepository.findAll();
 
-            if (departamentosExistentes.isEmpty()) {
-                this.departamentoRepository.save(departamento);
-                textoRespuesta = "El departamento ha sido creado con éxito.";
-            } else {
-                if (nombre == null || nombre.isBlank()) {
-                    textoRespuesta += "El nombre no puede estar vacio o ser null\n";
-                }
-                if (!textoRespuesta.isEmpty()) {
-                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
-                } else {
+            if (nombre == null || nombre.isBlank()) {
+                textoRespuesta += "El nombre no puede estar vacio o ser null\n";
+            }
+            if (!textoRespuesta.isEmpty()) {
+                textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+            }else{
+
+                if (departamentosExistentes.isEmpty()) {
+                    this.departamentoRepository.save(departamento);
+                    textoRespuesta = "El departamento ha sido creado con éxito.";
+                }else {
                     this.departamentoRepository.save(departamento);
                     textoRespuesta = "El Departamento ha sido creado con éxito.";
                 }

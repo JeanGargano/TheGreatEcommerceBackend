@@ -43,22 +43,23 @@ public class PersonalizacionServiceimp implements IPersonalizacionService {
 
             personalizacionesExistentes = this.personalizacionRepository.findAll();
 
-            if (personalizacionesExistentes.isEmpty()) {
-                this.personalizacionRepository.save(personalizacion);
-                textoRespuesta = "la personalizacion ha sido creada con éxito.";
-            } else {
-                if (idUsuario == null) {
-                    textoRespuesta += "El id de su usario no puede ser nulo no puede ser nula\n";
-                }
-                if (idArticulo == null) {
-                    textoRespuesta += "El ID del articulo no puede ser nulo\n";
-                }
-                if (idComentario == null) {
-                    textoRespuesta += "El ID del comentario no puede ser nulo\n";
-                }
-                if (!textoRespuesta.isEmpty()) {
-                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
-                } else {
+            if (idUsuario == null) {
+                textoRespuesta += "El id de su usario no puede ser nulo no puede ser nula\n";
+            }
+            if (idArticulo == null) {
+                textoRespuesta += "El ID del articulo no puede ser nulo\n";
+            }
+            if (idComentario == null) {
+                textoRespuesta += "El ID del comentario no puede ser nulo\n";
+            }
+            if (!textoRespuesta.isEmpty()) {
+                textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+            }else{
+
+                if (personalizacionesExistentes.isEmpty()) {
+                    this.personalizacionRepository.save(personalizacion);
+                    textoRespuesta = "la personalizacion ha sido creada con éxito.";
+                }else {
                     this.personalizacionRepository.save(personalizacion);
                     textoRespuesta = "La personalizacion ha sido creado con éxito.";
                 }

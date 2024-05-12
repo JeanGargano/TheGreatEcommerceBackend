@@ -47,21 +47,22 @@ public class DisenioServiceImp implements IDisenioService{
 
         diseniosExistentes = this.disenioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
-        if(diseniosExistentes.isEmpty()){
 
-            this.disenioRepository.save(diseno);
+        if (idUsuario == null) {
+            textoRespuesta = "El id del usuario no puede ser nulo";
+        } else if (estado == null) {
+            textoRespuesta = "El estado no puede ser nulo";
+        } else if (idPersonalizacion == null) {
+            textoRespuesta = "El id de su personalizacion no puede estar vacia o ser nula";
+        }else{
+            if(diseniosExistentes.isEmpty()) {
 
-            textoRespuesta =  "El diseño ha sido creado con éxito.";
-            System.out.println("Anda entrando aca");
+                this.disenioRepository.save(diseno);
 
-        } else {
-            if (idUsuario == null) {
-                textoRespuesta = "El id del usuario no puede ser nulo";
-            } else if (estado == null) {
-                textoRespuesta = "El estado no puede ser nulo";
-            } else if (idPersonalizacion == null) {
-                textoRespuesta = "El id de su personalizacion no puede estar vacia o ser nula";
-            } else {
+                textoRespuesta = "El diseño ha sido creado con éxito.";
+
+
+            }else {
                 this.disenioRepository.save(diseno);
                 textoRespuesta = "El diseño ha sido creado con éxito.";
             }

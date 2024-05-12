@@ -48,15 +48,18 @@ public class CategoriaServiceImp implements ICategoriaService{
 
             CategoriasExistentes = this.categoriaRepository.findAll();
 
-            if (CategoriasExistentes.isEmpty()) {
-                this.categoriaRepository.save(categoria);
-                textoRespuesta = "La categoria ha sido creado con éxito.";
-            } else {
-                if (tipoSexo == null) {
-                    textoRespuesta += "El tipo de sexo no puede ser nulo\n";
-                }if(tipoRopa == null){
-                    textoRespuesta += "El tipo de ropa no puede ser nulo\n";
-                } else {
+            if (tipoSexo == null) {
+                textoRespuesta += "El tipo de sexo no puede ser nulo\n";
+            }if(tipoRopa == null || tipoRopa.isBlank()){
+                textoRespuesta += "El tipo de ropa no puede ser nulo\n";
+            }else{
+
+
+
+                if (CategoriasExistentes.isEmpty()) {
+                    this.categoriaRepository.save(categoria);
+                    textoRespuesta = "La categoria ha sido creado con éxito.";
+                }else {
                     this.categoriaRepository.save(categoria);
                     textoRespuesta = "La categoria ha sido creado con éxito.";
                 }

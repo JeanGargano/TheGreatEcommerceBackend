@@ -45,17 +45,18 @@ public class TallaServiceImp implements ITallaService {
 
 
             tallasExistentes = this.tallaRepository.findAll();
+            if (nombreT == null) {
+                textoRespuesta += "El nombre de la talla no puede ser nulo\n";
+            }
+            if (!textoRespuesta.isEmpty()) {
+                textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+            }else{
 
-            if (tallasExistentes.isEmpty()) {
-                this.tallaRepository.save(talla);
-                textoRespuesta = "La talla ha sido creada con éxito.";
-            } else {
-                if (nombreT == null) {
-                    textoRespuesta += "El nombre de la talla no puede ser nulo\n";
-                }
-                if (!textoRespuesta.isEmpty()) {
-                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";}
-                else {
+
+                if (tallasExistentes.isEmpty()) {
+                    this.tallaRepository.save(talla);
+                    textoRespuesta = "La talla ha sido creada con éxito.";
+                }else {
                     this.tallaRepository.save(talla);
                     textoRespuesta = "La talla ha sido creada con éxito.";
                 }

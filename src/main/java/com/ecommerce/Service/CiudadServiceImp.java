@@ -52,17 +52,19 @@ public class CiudadServiceImp implements ICiudadService {
 
             CiudadesExistentes = this.ciudadRepository.findAll();
 
-            if (CiudadesExistentes.isEmpty()) {
-                this.ciudadRepository.save(ciudad);
-                textoRespuesta = "La ciudad ha sido creado con éxito.";
-            } else {
-                if (nombre == null || nombre.isBlank()) {
-                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
-                }
-                if (idDepartamento == null ) {
-                    textoRespuesta += "El id de su departamneto no puede ser null\n";
-                }
-                else {
+            if (nombre == null || nombre.isBlank()) {
+                textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+            }
+            if (idDepartamento == null ) {
+                textoRespuesta += "El id de su departamneto no puede ser null\n";
+            }else{
+
+                if (CiudadesExistentes.isEmpty()) {
+                    this.ciudadRepository.save(ciudad);
+                    textoRespuesta = "La ciudad ha sido creado con éxito.";
+
+
+                }else {
                     this.ciudadRepository.save(ciudad);
                     textoRespuesta = "La ciudad ha sido creado con éxito.";
                 }

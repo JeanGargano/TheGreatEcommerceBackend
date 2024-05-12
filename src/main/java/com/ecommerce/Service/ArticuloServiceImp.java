@@ -49,39 +49,42 @@ public class ArticuloServiceImp implements IArticuloService {
 
             ArticulosExistentes = this.ArticuloRepository.findAll();
 
-            if (ArticulosExistentes.isEmpty()) {
-                this.ArticuloRepository.save(articulo);
-                textoRespuesta = "El artículo ha sido creado con éxito.";
-            } else {
-                if (imagen == null || imagen.isBlank()) {
-                    textoRespuesta += "La imagen no puede ser nula o estar vacia\n";
-                }
-                if (descripcion == null || descripcion.isBlank()) {
-                    textoRespuesta += "La descripcion no puede ser nula o estar vacia\n";
-                }
-                if (nombre == null || nombre.isBlank()) {
-                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
-                }
-                if (precio == null) {
-                    textoRespuesta += "El precio no puede estar vacio\n";
+            if (imagen == null || imagen.isBlank()) {
+                textoRespuesta += "La imagen no puede ser nula o estar vacia\n";
+            }
+            if (descripcion == null || descripcion.isBlank()) {
+                textoRespuesta += "La descripcion no puede ser nula o estar vacia\n";
+            }
+            if (nombre == null || nombre.isBlank()) {
+                textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+            }
+            if (precio == null || precio < 0) {
+                textoRespuesta += "El precio no puede estar vacio ó ser menor a 0\n";
 
-                }
-                if (cantidad == null) {
-                    textoRespuesta += "La cantidad no puede ser nula\n";}
+            }
+            if (cantidad == null || cantidad < 0) {
+                textoRespuesta += "La cantidad no puede ser nula ó ser menor a 0\n";}
 
-                if (nombre == null || nombre.isBlank()) {
-                    textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
-                }
-                if (nombreTalla == null) {
-                    textoRespuesta += "La talla no puede ser nula\n";
-                }
-                if (categoria == null) {
-                    textoRespuesta += "La categoria no puede ser nula.\n";
-                }if (personalizable == null) {
-                    textoRespuesta += "El campo es personalizable no puede ser nulo.\n";
-                }
-                if (!textoRespuesta.isEmpty()) {
-                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+            if (nombre == null || nombre.isBlank()) {
+                textoRespuesta += "El nombre no puede ser nulo o estar vacio\n";
+            }
+            if (nombreTalla == null) {
+                textoRespuesta += "La talla no puede ser nula\n";
+            }
+            if (categoria == null) {
+                textoRespuesta += "La categoria no puede ser nula.\n";
+            }if (personalizable == null) {
+                textoRespuesta += "El campo es personalizable no puede ser nulo.\n";
+            }
+            if (!textoRespuesta.isEmpty()) {
+                textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
+            }else{
+
+                if (ArticulosExistentes.isEmpty()) {
+                    this.ArticuloRepository.save(articulo);
+                    textoRespuesta = "El artículo ha sido creado con éxito.";
+
+
                 } else {
                     this.ArticuloRepository.save(articulo);
                     textoRespuesta = "El artículo ha sido creado con éxito.";
