@@ -2,7 +2,10 @@ package com.ecommerce.Service;
 
 import com.ecommerce.Model.*;
 import com.ecommerce.Model.Dto.OrdenModelDTO;
+import com.ecommerce.Model.Enums.Estado;
+import com.ecommerce.Repository.IArticuloRepository;
 import com.ecommerce.Repository.IOrdenRepository;
+import com.ecommerce.Service.Functions.generarPago;
 import com.ecommerce.exception.RecursoNoEncontradoException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -27,6 +30,9 @@ public class IOrdenImp implements IOrdenService {
 
     @Autowired
     IArticuloService articuloService;
+
+    @Autowired
+    IArticuloRepository articuloRepository;
 
     private List<OrdenModel> ordenesExistentes; // Se crea para mantener actualizado los datos entre bd y api
 
@@ -65,17 +71,14 @@ public class IOrdenImp implements IOrdenService {
             }
 
             String fecha = orden.getFecha();
-            Double valorTotal = orden.getValorTotal();
             String direccion = orden.getDireccion();
             DepartamentoModel idDepartamento = orden.getIdDepartamento();
             String tipoEntrega = orden.getTipoEntrega();
             UsuarioModel idUsuario = orden.getIdUsuario();
+            Estado estado = orden.getEstado();
 
             if (fecha == null || fecha.isBlank()) {
                 textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
-            }
-            if (valorTotal == null || valorTotal < 0) {
-                textoRespuesta += "El Valor Total no puede ser nulo o estar vacio\n";
 
             }if (direccion == null || direccion.isBlank()){
 
@@ -99,7 +102,8 @@ public class IOrdenImp implements IOrdenService {
 
                 Integer idArticulo = 0;
                 Integer cantidad = 0;
-
+                Integer precioArticulo = 0;
+                Double totalPagar = 0.0;
 
 
                 if(articulos.size() == 1) {
@@ -107,28 +111,42 @@ public class IOrdenImp implements IOrdenService {
 
                     OrdenModel objO = new OrdenModel();
 
+
+
+
                     objO.setFecha(fecha);
-                    objO.setValorTotal(valorTotal);
                     objO.setDireccion(direccion);
                     objO.setIdDepartamento(idDepartamento);
                     objO.setTipoEntrega(tipoEntrega);
                     objO.setIdUsuario(idUsuario);
+                    objO.setEstado(estado);
 
                     for (int i = 0; i < articulos.size(); i++) {
 
+
+
                         ArticuloModel objArticulo = articulos.get(i);
                         idArticulo = objArticulo.getIdArticulo();
-                        cantidad = objArticulo.getCantidad();
+                        Optional<ArticuloModel> datosArticulo = articuloRepository.findById(idArticulo);
+                        ArticuloModel datosA = datosArticulo.get();
 
+                        cantidad = objArticulo.getCantidad();
+                        precioArticulo = datosA.getPrecio();
                         objO.setIdArticulo(idArticulo);
                         objO.setCantidad(cantidad);
+
+                        generarPago objGP = new generarPago();
+                        totalPagar += objGP.generarPago(precioArticulo, cantidad);
+                        objO.setValorTotal(totalPagar);
                         this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
                         this.ordenRepository.save(objO);
+
 
 
                         break;
                     }
                     textoRespuesta = "La orden ha sido creada con éxito.";
+                    System.out.println("El total a pagar es de: $" + totalPagar + " COP");
                 }else if(articulos.size() == 0){
                     textoRespuesta += "Articulos no seleccionados.";
                 }else{
@@ -143,14 +161,22 @@ public class IOrdenImp implements IOrdenService {
                         idArticulo = objArticulo.getIdArticulo();
                         cantidad = objArticulo.getCantidad();
 
+                        Optional<ArticuloModel> datosArticulo = articuloRepository.findById(idArticulo);
+                        ArticuloModel datosA = datosArticulo.get();
+
                         objO.setIdArticulo(idArticulo);
                         objO.setCantidad(cantidad);
                         objO.setFecha(fecha);
-                        objO.setValorTotal(valorTotal);
+
                         objO.setDireccion(direccion);
                         objO.setIdDepartamento(idDepartamento);
                         objO.setTipoEntrega(tipoEntrega);
                         objO.setIdUsuario(idUsuario);
+                        objO.setEstado(estado);
+                        precioArticulo = datosA.getPrecio();
+                        generarPago objGP = new generarPago();
+                        totalPagar += objGP.generarPago(precioArticulo, cantidad);
+                        objO.setValorTotal(totalPagar);
                         this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
                         this.ordenRepository.save(objO);
 
@@ -158,6 +184,7 @@ public class IOrdenImp implements IOrdenService {
 
                     }
                     textoRespuesta = "La orden ha sido creada con éxito.";
+                    System.out.println("El total a pagar es de: $" + totalPagar + " COP");
 
                 }
             } else {
@@ -166,6 +193,8 @@ public class IOrdenImp implements IOrdenService {
                 } else {
                     Integer idArticulo = 0;
                     Integer cantidad = 0;
+                    Integer precioArticulo = 0;
+                    Double totalPagar = 0.0;
 
                     if(articulos.size() == 1) {
 
@@ -173,20 +202,28 @@ public class IOrdenImp implements IOrdenService {
                         OrdenModel objO = new OrdenModel();
 
                         objO.setFecha(fecha);
-                        objO.setValorTotal(valorTotal);
                         objO.setDireccion(direccion);
                         objO.setIdDepartamento(idDepartamento);
                         objO.setTipoEntrega(tipoEntrega);
                         objO.setIdUsuario(idUsuario);
+                        objO.setEstado(estado);
 
                         for (int i = 0; i < articulos.size(); i++) {
 
                             ArticuloModel objArticulo = articulos.get(i);
                             idArticulo = objArticulo.getIdArticulo();
+
+                            Optional<ArticuloModel> datosArticulo = articuloRepository.findById(idArticulo);
+                            ArticuloModel datosA = datosArticulo.get();
+
                             cantidad = objArticulo.getCantidad();
+                            precioArticulo = datosA.getPrecio();
 
                             objO.setIdArticulo(idArticulo);
                             objO.setCantidad(cantidad);
+                            generarPago objGP = new generarPago();
+                            totalPagar += objGP.generarPago(precioArticulo, cantidad);
+                            objO.setValorTotal(totalPagar);
                             this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
                             this.ordenRepository.save(objO);
 
@@ -194,6 +231,7 @@ public class IOrdenImp implements IOrdenService {
                             break;
                         }
                         textoRespuesta = "La orden ha sido creada con éxito.";
+                        System.out.println("El total a pagar es de: $" + totalPagar + " COP");
                     }else if(articulos.size() == 0){
                         textoRespuesta += "Articulos no seleccionados.";
                     }else{
@@ -206,16 +244,24 @@ public class IOrdenImp implements IOrdenService {
 
                             ArticuloModel objArticulo = articulos.get(i);
                             idArticulo = objArticulo.getIdArticulo();
+
+                            Optional<ArticuloModel> datosArticulo = articuloRepository.findById(idArticulo);
+                            ArticuloModel datosA = datosArticulo.get();
+
                             cantidad = objArticulo.getCantidad();
                             System.out.println("la cantidad es" + cantidad);
                             objO.setIdArticulo(idArticulo);
                             objO.setCantidad(cantidad);
                             objO.setFecha(fecha);
-                            objO.setValorTotal(valorTotal);
                             objO.setDireccion(direccion);
                             objO.setIdDepartamento(idDepartamento);
                             objO.setTipoEntrega(tipoEntrega);
                             objO.setIdUsuario(idUsuario);
+                            objO.setEstado(estado);
+                            precioArticulo = datosA.getPrecio();
+                            generarPago objGP = new generarPago();
+                            totalPagar += objGP.generarPago(precioArticulo, cantidad);
+                            objO.setValorTotal(totalPagar);
                             this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
                             this.ordenRepository.save(objO);
 
@@ -223,6 +269,7 @@ public class IOrdenImp implements IOrdenService {
 
                         }
                         textoRespuesta = "La orden ha sido creada con éxito.";
+                        System.out.println("El total a pagar es de: $" + totalPagar + " COP");
 
                     }
 
@@ -230,6 +277,7 @@ public class IOrdenImp implements IOrdenService {
             }
         } catch (NullPointerException e) {
             textoRespuesta += "Algún objeto es nulo\n";
+            System.out.println(("message error: " + e.getLocalizedMessage()));
 
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";

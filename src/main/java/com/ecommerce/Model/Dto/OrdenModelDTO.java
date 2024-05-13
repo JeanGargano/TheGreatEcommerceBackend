@@ -2,8 +2,12 @@ package com.ecommerce.Model.Dto;
 import java.util.List;
 import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.DepartamentoModel;
+import com.ecommerce.Model.Enums.Estado;
 import com.ecommerce.Model.OrdenModel;
 import com.ecommerce.Model.UsuarioModel;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +23,6 @@ public class OrdenModelDTO {
 
 
     private String fecha;
-    private Double valorTotal;
     private String direccion;
 
     private DepartamentoModel idDepartamento;
@@ -29,6 +32,9 @@ public class OrdenModelDTO {
 
     @OneToMany
     private List<ArticuloModel> idArticulo;
+
+    @Enumerated(EnumType.STRING)
+    private Estado estado;
 
 
 }
