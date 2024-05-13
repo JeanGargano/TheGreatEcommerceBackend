@@ -1,10 +1,8 @@
 package com.ecommerce.Service;
 
-import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.DisenioModel;
 import com.ecommerce.Model.Dto.DisenioDTO;
 import com.ecommerce.Model.Enums.Estado;
-import com.ecommerce.Model.PersonalizacionModel;
 import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Repository.IDisenioRepository;
 import jakarta.annotation.PostConstruct;
@@ -43,7 +41,7 @@ public class DisenioServiceImp implements IDisenioService{
 
         UsuarioModel idUsuario = diseno.getIdUsuario();
         Estado estado = diseno.getEstado();
-        PersonalizacionModel idPersonalizacion = diseno.getIdPersonalizacion();
+
 
         diseniosExistentes = this.disenioRepository.findAll(); // Actualiza cada vez por si se agrego otra anteriormente.
 
@@ -52,8 +50,6 @@ public class DisenioServiceImp implements IDisenioService{
             textoRespuesta = "El id del usuario no puede ser nulo";
         } else if (estado == null) {
             textoRespuesta = "El estado no puede ser nulo";
-        } else if (idPersonalizacion == null) {
-            textoRespuesta = "El id de su personalizacion no puede estar vacia o ser nula";
         }else{
             if(diseniosExistentes.isEmpty()) {
 
@@ -93,7 +89,6 @@ public class DisenioServiceImp implements IDisenioService{
             idDiseño = DisenioEncontrado.get().getIdDisenio();
             idUsuario = DisenioEncontrado.get().getIdUsuario().getIdUsuario();
             estadoDiseño = DisenioEncontrado.get().getEstado();
-            idPersonalizacion = DisenioEncontrado.get().getIdPersonalizacion().getIdPersonalizacion();
 
             objD.setIdDisenio(idDiseño);
             objD.setIdUsuario(idUsuario);

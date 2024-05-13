@@ -38,16 +38,12 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
 
         try {
             OrdenModel idOrden = ordenPersonalizacion.getIdOrden();
-            PersonalizacionModel idPersonalizacion = ordenPersonalizacion.getIdPersonalizacion();
             String reciboPAGO = ordenPersonalizacion.getReciboPago();
 
             ordenesPersonalizacionesExistentes = this.ordenPersonalizacionRepository.findAll();
 
             if (idOrden == null) {
                 textoRespuesta += "el id de la orden no puede ser nulo\n";
-            }
-            if (idPersonalizacion == null) {
-                textoRespuesta += "El id de la personalizacion no puede ser nulo\n";
             }
             if (reciboPAGO == null || reciboPAGO.isBlank()) {
                 textoRespuesta += "El recibo de pago no puede ser nulo, recuerde adjuntar una imagen\n";

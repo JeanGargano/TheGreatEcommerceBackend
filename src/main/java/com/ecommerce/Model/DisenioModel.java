@@ -27,7 +27,4 @@ public class DisenioModel {
     private Estado estado;
 
 
-    @ManyToOne
-    @JoinColumn(name = "idPersonalizacion")
-    private PersonalizacionModel idPersonalizacion;
 }

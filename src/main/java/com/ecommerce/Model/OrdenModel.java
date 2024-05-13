@@ -41,6 +41,7 @@ public class OrdenModel {
 
     @Column(name = "estado")
     @Enumerated(EnumType.STRING)
+
     private Estado estado;
 
 

@@ -1,5 +1,6 @@
 package com.ecommerce.Model;
 
+import com.ecommerce.Model.Enums.Estado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,17 +19,13 @@ public class OrdenPersonalizacionModel {
     private Integer idOrdenPersonalizacion;
 
     @ManyToOne
-    @JoinColumn(name = "idorden")
+    @JoinColumn(name="idOrden")
     private OrdenModel idOrden;
 
     @ManyToOne
-    @JoinColumn(name = "idDiseniador")
-    private UsuarioModel idDiseniador;
-
-    @ManyToOne
-    @JoinColumn(name = "idPersonalizacion")
-    private PersonalizacionModel idPersonalizacion;
-
+    @JoinColumn(name = "idComentario")
+    private ComentarioModel idComentario;
 
     private String reciboPago;
+
 }

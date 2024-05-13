@@ -215,10 +215,6 @@ public class UsuarioServiceImp implements IUsuarioService {
         }
 
 
-        //Asignar diseñador
-        ordenP.setIdDiseniador(usuario);
-        ordenPersonalizacionRepository.save(ordenP);
-
 
 
         return ordenP;
