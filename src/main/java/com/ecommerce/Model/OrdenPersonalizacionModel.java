@@ -22,6 +22,10 @@ public class OrdenPersonalizacionModel {
     private OrdenModel idOrden;
 
     @ManyToOne
+    @JoinColumn(name = "idDiseniador")
+    private UsuarioModel idDiseniador;
+
+    @ManyToOne
     @JoinColumn(name = "idPersonalizacion")
     private PersonalizacionModel idPersonalizacion;
 

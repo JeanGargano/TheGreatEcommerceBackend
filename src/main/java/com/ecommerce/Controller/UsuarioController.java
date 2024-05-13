@@ -2,6 +2,7 @@ package com.ecommerce.Controller;
 
 
 import com.ecommerce.Model.Dto.UsuarioModelDto;
+import com.ecommerce.Model.Enums.TipoUsuario;
 import com.ecommerce.Model.UsuarioModel;
 import com.ecommerce.Service.IUsuarioService;
 import com.ecommerce.exception.RecursoNoEncontradoException;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -58,5 +60,27 @@ public class UsuarioController {
         List<String> diseniadores = usuarioService.listarDiseniadores();
         return new ResponseEntity<>(diseniadores, HttpStatus.OK);
     }
+
+    @PutMapping("/{idUsuario}/asignarRol/{rol}")
+    public ResponseEntity<String> asignarRol(
+            @PathVariable Integer idUsuario,
+            @PathVariable TipoUsuario rol,
+            @RequestHeader(name = "rol") TipoUsuario rolUsuario) {
+
+        usuarioService.asignarRol(idUsuario, rol, rolUsuario);
+        return ResponseEntity.ok("Rol asignado correctamente");
+    }
+
+
+    @PutMapping("/{idOrdenPersonalizacion}/asignarDiseniador/{idUsuario}")
+    public ResponseEntity<String> asignarDiseniador(
+            @PathVariable Integer idOrdenPersonalizacion,
+            @PathVariable Integer idUsuario,
+            @RequestHeader(name = "rol") TipoUsuario rolUsuario) {
+
+        usuarioService.asignarDiseniador(idOrdenPersonalizacion, idUsuario, rolUsuario);
+        return ResponseEntity.ok("Diseñador asignado exitosamente.");
+    }
+
 
 }

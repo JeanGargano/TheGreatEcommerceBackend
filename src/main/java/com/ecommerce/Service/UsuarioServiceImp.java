@@ -4,17 +4,23 @@ package com.ecommerce.Service;
 import com.ecommerce.Model.Enums.TipoSexo;
 import com.ecommerce.Model.Enums.TipoUsuario;
 import com.ecommerce.Model.Dto.UsuarioModelDto;
+import com.ecommerce.Model.OrdenPersonalizacionModel;
 import com.ecommerce.Model.UsuarioModel;
+import com.ecommerce.Repository.IOrdenPersonalizacionRepository;
 import com.ecommerce.Repository.IUsuarioRepository;
+import com.ecommerce.exception.AccesoNoAutorizadoException;
+import com.ecommerce.exception.RecursoNoEncontradoException;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.io.UncheckedIOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,6 +31,9 @@ public class UsuarioServiceImp implements IUsuarioService {
 
     @Autowired
     IUsuarioRepository usuarioRepository;
+
+    @Autowired
+    IOrdenPersonalizacionRepository ordenPersonalizacionRepository;
 
     private List<UsuarioModel> usuariosExistentes; // Se crea para mantener actualizado los datos entre bd y api
 
@@ -160,5 +169,60 @@ public class UsuarioServiceImp implements IUsuarioService {
 
         return diseniadores;
     }
+
+
+    @Override
+    public UsuarioModel asignarRol(Integer idUsuario, TipoUsuario rol, TipoUsuario rolUsuario) {
+        //try catch por si se ingresa mal el valor del rol
+        try {
+            // Obtener el usuario
+            UsuarioModel usuario = usuarioRepository.findById(idUsuario)
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
+
+            // Verificar si el usuario tiene permisos de administrador
+            if (!TipoUsuario.Administrador.equals(rolUsuario)) {
+                throw new AccesoNoAutorizadoException("No tienes permisos para asignar roles");
+            }
+
+            // Asignar el rol al usuario
+            usuario.setRol(rol);
+            usuarioRepository.save(usuario);
+
+            return usuario;
+
+        } catch (MethodArgumentTypeMismatchException ex){
+            String mensajeError = "El valor proporcionado para el rol no es válido";
+            throw new IllegalArgumentException(mensajeError, ex);
+        }
+    }
+
+
+    @Override
+    public OrdenPersonalizacionModel asignarDiseniador(Integer idOrdenPersonalizacion, Integer idUsuario, TipoUsuario rolUsuario) {
+
+        OrdenPersonalizacionModel ordenP = ordenPersonalizacionRepository.findById(idOrdenPersonalizacion)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Orden no encontrada"));
+
+        if (!TipoUsuario.Encargado.equals(rolUsuario)) {
+            throw new AccesoNoAutorizadoException("No tienes permisos para asignar diseñadores");
+        }
+
+        UsuarioModel usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
+
+        if (!TipoUsuario.Diseniador.equals(usuario.getRol())) {
+            throw new AccesoNoAutorizadoException("El usuario no es un diseñador");
+        }
+
+
+        //Asignar diseñador
+        ordenP.setIdDiseniador(usuario);
+        ordenPersonalizacionRepository.save(ordenP);
+
+
+
+        return ordenP;
+    }
+
 
 }
