@@ -103,6 +103,7 @@ public class IOrdenImp implements IOrdenService {
                 Integer idArticulo = 0;
                 Integer cantidad = 0;
                 Integer precioArticulo = 0;
+                Double totalPagarArticulo = 0.0;
                 Double totalPagar = 0.0;
 
 
@@ -136,8 +137,9 @@ public class IOrdenImp implements IOrdenService {
                         objO.setCantidad(cantidad);
 
                         generarPago objGP = new generarPago();
-                        totalPagar += objGP.generarPago(precioArticulo, cantidad);
-                        objO.setValorTotal(totalPagar);
+                        totalPagarArticulo = objGP.generarPago(precioArticulo, cantidad);
+                        totalPagar += totalPagarArticulo;
+                        objO.setValorTotal(totalPagarArticulo);
                         this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
                         this.ordenRepository.save(objO);
 
@@ -175,8 +177,9 @@ public class IOrdenImp implements IOrdenService {
                         objO.setEstado(estado);
                         precioArticulo = datosA.getPrecio();
                         generarPago objGP = new generarPago();
-                        totalPagar += objGP.generarPago(precioArticulo, cantidad);
-                        objO.setValorTotal(totalPagar);
+                        totalPagarArticulo = objGP.generarPago(precioArticulo, cantidad);
+                        totalPagar += totalPagarArticulo;
+                        objO.setValorTotal(totalPagarArticulo);
                         this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
                         this.ordenRepository.save(objO);
 
@@ -194,6 +197,7 @@ public class IOrdenImp implements IOrdenService {
                     Integer idArticulo = 0;
                     Integer cantidad = 0;
                     Integer precioArticulo = 0;
+                    Double totalPagarArticulo = 0.0;
                     Double totalPagar = 0.0;
 
                     if(articulos.size() == 1) {
@@ -222,8 +226,9 @@ public class IOrdenImp implements IOrdenService {
                             objO.setIdArticulo(idArticulo);
                             objO.setCantidad(cantidad);
                             generarPago objGP = new generarPago();
-                            totalPagar += objGP.generarPago(precioArticulo, cantidad);
-                            objO.setValorTotal(totalPagar);
+                            totalPagarArticulo = objGP.generarPago(precioArticulo, cantidad);
+                            objO.setValorTotal(totalPagarArticulo);
+                            totalPagar += totalPagarArticulo;
                             this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
                             this.ordenRepository.save(objO);
 
@@ -260,8 +265,9 @@ public class IOrdenImp implements IOrdenService {
                             objO.setEstado(estado);
                             precioArticulo = datosA.getPrecio();
                             generarPago objGP = new generarPago();
-                            totalPagar += objGP.generarPago(precioArticulo, cantidad);
-                            objO.setValorTotal(totalPagar);
+                            totalPagarArticulo = objGP.generarPago(precioArticulo, cantidad);
+                            totalPagar += totalPagarArticulo;
+                            objO.setValorTotal(totalPagarArticulo);
                             this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
                             this.ordenRepository.save(objO);
 

@@ -1,6 +1,9 @@
 package com.ecommerce.Service.Functions;
 
+import com.ecommerce.Model.ArticuloModel;
 import com.ecommerce.Model.OrdenModel;
+
+import java.util.List;
 
 public class generarPago {
 
@@ -15,7 +18,7 @@ public class generarPago {
     }
 
 
-    public String generarConstancia(OrdenModel orden){
+    public String generarConstancia(OrdenModel orden, List<ArticuloModel> articulos){
 
         String textoRespuesta = "";
 
