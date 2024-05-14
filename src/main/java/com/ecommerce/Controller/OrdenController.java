@@ -3,15 +3,20 @@ package com.ecommerce.Controller;
 
 import com.ecommerce.Model.Dto.OrdenModelDTO;
 import com.ecommerce.Model.OrdenModel;
+import com.ecommerce.Repository.IOrdenRepository;
 import com.ecommerce.Service.IOrdenService;
 import com.ecommerce.exception.RecursoNoEncontradoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/orden")
@@ -19,6 +24,9 @@ public class OrdenController {
 
     @Autowired
     IOrdenService ordenService;
+
+    @Autowired
+    IOrdenRepository ordenRepository;
 
     @PostMapping("/save")
     public ResponseEntity<String> crearOrden(@RequestBody OrdenModelDTO orden) {
@@ -56,12 +64,13 @@ public class OrdenController {
         return ResponseEntity.ok(orden);
     }
 
-    @GetMapping("/get/paginarOrden")
-    public ResponseEntity<List<OrdenModel>> getOrdenOrdenadas(){
-
-        List<OrdenModel> ordenArreglo = ordenService.ordenarOrden();
-        return new ResponseEntity<>(ordenArreglo,HttpStatus.OK);
+    @GetMapping("get/paginarOrdenes")
+    public ResponseEntity<Page<OrdenModel>> listarOrdenes(@RequestParam int page, @RequestParam int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<OrdenModel> ordenes = ordenRepository.findAll(pageable);
+        return ResponseEntity.ok(ordenes);
     }
+
 
 
 }

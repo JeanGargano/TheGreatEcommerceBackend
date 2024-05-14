@@ -17,4 +17,6 @@ public interface IOrdenService {
     Optional<String> listarInformacion(Integer idOrden);
 
     List<OrdenModel> ordenarOrden();
+
+    List<OrdenModel> paginacionOrdenes(String año);
 }

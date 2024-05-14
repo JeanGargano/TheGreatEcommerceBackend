@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 
 import java.io.UncheckedIOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -373,9 +375,29 @@ public class IOrdenImp implements IOrdenService {
         List<OrdenModel> ordenesEncontrada = ordenRepository.findAll();
 
 
-        ordenesEncontrada.sort((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()));
+        //ordenesEncontrada.sort((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()));
 
         return ordenesEncontrada;
-    };
+    }
 
-}
+    public List<OrdenModel> paginacionOrdenes(String año) {
+        List<OrdenModel> ordenesEncontradas = ordenRepository.findAll();
+        List<OrdenModel> ordenesFiltradas = new ArrayList<>();
+
+        for (OrdenModel orden : ordenesEncontradas) {
+            String fecha = orden.getFecha();
+            if (fecha != null && fecha.startsWith(año)) {
+                ordenesFiltradas.add(orden);
+
+            }
+        }
+        return ordenesFiltradas;
+    }
+
+
+
+    }
+
+
+
+
