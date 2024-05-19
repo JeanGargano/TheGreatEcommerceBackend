@@ -28,4 +28,8 @@ public class OrdenPersonalizacionModel {
 
     private String reciboPago;
 
+    @ManyToOne
+    @JoinColumn(name="idUsuario")
+    private UsuarioModel suDiseniador;
+
 }
