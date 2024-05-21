@@ -29,7 +29,7 @@ public class OrdenPersonalizacionModel {
     private String reciboPago;
 
     @ManyToOne
-    @JoinColumn(name="idUsuario")
+    @JoinColumn(name="suDiseniador")
     private UsuarioModel suDiseniador;
 
 }

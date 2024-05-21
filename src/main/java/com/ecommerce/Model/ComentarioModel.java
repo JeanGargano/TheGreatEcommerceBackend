@@ -18,6 +18,7 @@ public class ComentarioModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idComentario;
+
     private String descripcion;
     private String fecha;
 

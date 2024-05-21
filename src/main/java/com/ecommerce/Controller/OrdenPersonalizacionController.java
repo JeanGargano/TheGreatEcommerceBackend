@@ -20,6 +20,7 @@ public class OrdenPersonalizacionController {
 
     @PostMapping("/save")
     public ResponseEntity<String> crearOrdenPersonalizacion(@RequestBody OrdenPersonalizacionModel ordenPersonalizacion) {
+        System.out.println(ordenPersonalizacion.toString());
         String resultadoHttp = ordenPersonalizacionService.crearOrdenPersonalizacion(ordenPersonalizacion);
         return new ResponseEntity<String>(resultadoHttp, HttpStatus.OK);
     }

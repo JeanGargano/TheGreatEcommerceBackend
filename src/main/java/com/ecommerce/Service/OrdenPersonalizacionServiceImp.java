@@ -1,6 +1,7 @@
 package com.ecommerce.Service;
 
 import com.ecommerce.Model.*;
+import com.ecommerce.Repository.IComentarioRepository;
 import com.ecommerce.Repository.IOrdenPersonalizacionRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import com.ecommerce.Model.ComentarioModel;
 
 import java.io.UncheckedIOException;
 import java.util.List;
@@ -20,6 +22,9 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
 
     @Autowired
     IOrdenPersonalizacionRepository ordenPersonalizacionRepository;
+
+    @Autowired
+    IComentarioRepository comentarioRepository;
 
     private List<OrdenPersonalizacionModel> ordenesPersonalizacionesExistentes; // Se crea para mantener actualizado los datos entre bd y api
 
@@ -37,26 +42,61 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
         String textoRespuesta = "";
 
         try {
-            OrdenModel idOrden = ordenPersonalizacion.getIdOrden();
-            String reciboPAGO = ordenPersonalizacion.getReciboPago();
+            ComentarioModel comentarioOrden = ordenPersonalizacion.getIdComentario();
+
+            String descripcion = comentarioOrden.getDescripcion();
+            String fechaComentario = comentarioOrden.getFecha();
+            Integer idUsuarioComentario = comentarioOrden.getIdUsuario().getIdUsuario();
+
+            String reciboPago = ordenPersonalizacion.getReciboPago();
+
+
+            UsuarioModel suDiseniador = ordenPersonalizacion.getSuDiseniador();
+
+            Integer idUsuarioDiseniador = suDiseniador.getIdUsuario();
+
+
 
             ordenesPersonalizacionesExistentes = this.ordenPersonalizacionRepository.findAll();
 
-            if (idOrden == null) {
-                textoRespuesta += "el id de la orden no puede ser nulo\n";
+            if (idUsuarioComentario == null) {
+                textoRespuesta += "el id del comentario de usuario no puede ser nulo\n";
             }
-            if (reciboPAGO == null || reciboPAGO.isBlank()) {
-                textoRespuesta += "El recibo de pago no puede ser nulo, recuerde adjuntar una imagen\n";
+
+            if (descripcion == null || descripcion.isBlank()) {
+                textoRespuesta += "La descripción no puede ser nula.\n";
+            }
+
+            if(fechaComentario == null || fechaComentario.isBlank()){
+                textoRespuesta += "La fecha del comentario no puede ser nula.";
+            }
+            if(reciboPago == null || reciboPago.isBlank()){
+                textoRespuesta += "El recibo del pago no puede ser nulo.";
+            }
+            if(idUsuarioDiseniador == null){
+                textoRespuesta += "La id del diseñador no puede ser nula.";
             }
             if (!textoRespuesta.isEmpty()) {
                 textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
             }else{
+                 // Este proceso se hace, ya que si se guarda comentario se sobreescribe el obj en vez de guardarlo como otro
+                ComentarioModel comentario = ordenPersonalizacion.getIdComentario();
+                ComentarioModel objC = new ComentarioModel();
+
+                objC.setDescripcion(comentario.getDescripcion());
+                objC.setFecha(comentario.getFecha());
+                objC.setIdUsuario(comentario.getIdUsuario());
 
                 if (ordenesPersonalizacionesExistentes.isEmpty()) {
                     this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
+                    this.comentarioRepository.save(comentario);
                     textoRespuesta = "La orden de personalizacion ha sido creado con éxito.";
                 }else {
+
+
+
                     this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
+                    this.comentarioRepository.save(objC);
                     textoRespuesta = "La orden de personalizacion ha sido creada con exito.";
                 }
             }
