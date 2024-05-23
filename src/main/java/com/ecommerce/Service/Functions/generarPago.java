@@ -18,33 +18,7 @@ public class generarPago {
     }
 
 
-    public String generarConstancia(OrdenModel orden, List<ArticuloModel> articulos){
 
-        String textoRespuesta = "";
-
-
-        Integer idOrden = orden.getIdOrden();
-        String fechaOrden = orden.getFecha();
-        Double valorTotal = orden.getValorTotal();
-        String direccionEnvio = orden.getDireccion();
-
-        Integer idDepartamento = orden.getIdDepartamento().getIdDepartamento();
-        String tipoEntrega = orden.getTipoEntrega();
-
-
-        Integer idUsuario = orden.getIdUsuario().getIdUsuario();
-        String estadoOrden = orden.getEstado().name();
-
-
-
-
-
-
-
-
-
-        return textoRespuesta;
-    }
 
 
 
