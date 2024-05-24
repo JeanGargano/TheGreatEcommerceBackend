@@ -1,5 +1,5 @@
 package com.ecommerce.Service;
-
+import com.ecommerce.Model.OrdenModel;
 public interface IEmailService {
-    String enviarEmail(Integer idOrden);
+    String enviarEmail(OrdenModel objO, Integer idUsuario);
 }

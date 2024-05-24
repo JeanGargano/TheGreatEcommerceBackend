@@ -36,6 +36,9 @@ public class IOrdenImp implements IOrdenService {
     @Autowired
     IArticuloRepository articuloRepository;
 
+    @Autowired
+    IEmailService emailService;
+
     private List<OrdenModel> ordenesExistentes; // Se crea para mantener actualizado los datos entre bd y api
 
     @PostConstruct
@@ -97,6 +100,7 @@ public class IOrdenImp implements IOrdenService {
 
         // Si no hay errores, proceder con la creación de la orden
         double totalPagar = 0.0;
+        int vecesCorreo = 0;
         for (ArticuloModel articulo : articulos) {
             Optional<ArticuloModel> datosArticulo = articuloRepository.findById(articulo.getIdArticulo());
             ArticuloModel datosA = datosArticulo.get();
@@ -122,7 +126,15 @@ public class IOrdenImp implements IOrdenService {
 
             // Actualizar la cantidad en el stock
             articuloService.actualizarCantidadEnBd(objO, articulo);
+            System.out.println("El objeto es: " + objO.toString());
             this.ordenRepository.save(objO);
+
+            if(articulos.size() > 1 && vecesCorreo == 0) {
+                this.emailService.enviarEmail(objO, orden.getIdUsuario().getIdUsuario());
+                vecesCorreo++;
+            }
+
+
         }
 
         // Retornar mensaje de éxito
