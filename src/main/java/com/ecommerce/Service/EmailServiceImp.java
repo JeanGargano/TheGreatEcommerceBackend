@@ -31,7 +31,7 @@ public class EmailServiceImp implements IEmailService{
     IUsuarioRepository usuarioRepository;
 
     @Override
-    public String enviarEmail(OrdenModel objO, Integer idUsuario){
+    public String enviarEmail(OrdenModel objO, Integer idUsuario, Double totalPagar){
 
         String textoEmail = "";
         String emailCliente = "";
@@ -153,7 +153,7 @@ public class EmailServiceImp implements IEmailService{
                     "                </tbody>\n" +
                     "            </table>\n" +
                     "            <div class=\"total\">\n" +
-                    "                <p><strong>Total: $85.00</strong></p>\n" +
+                    "                <p><strong>Total : "+totalPagar+"</strong></p>\n" +
                     "            </div>\n" +
                     "        </div>\n" +
                     "        <div class=\"shipping-details\">\n" +

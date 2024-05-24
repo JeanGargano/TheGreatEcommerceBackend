@@ -129,8 +129,8 @@ public class IOrdenImp implements IOrdenService {
             System.out.println("El objeto es: " + objO.toString());
             this.ordenRepository.save(objO);
 
-            if(articulos.size() > 1 && vecesCorreo == 0) {
-                this.emailService.enviarEmail(objO, orden.getIdUsuario().getIdUsuario());
+            if(articulos.size() >= 1 && vecesCorreo == 0) {
+                this.emailService.enviarEmail(objO, orden.getIdUsuario().getIdUsuario(), totalPagarArticulo);
                 vecesCorreo++;
             }
 
