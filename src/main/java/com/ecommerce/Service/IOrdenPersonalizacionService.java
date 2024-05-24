@@ -2,6 +2,8 @@ package com.ecommerce.Service;
 
 
 import com.ecommerce.Model.OrdenPersonalizacionModel;
+import com.ecommerce.Model.UsuarioModel;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -12,4 +14,5 @@ public interface IOrdenPersonalizacionService {
     List<OrdenPersonalizacionModel> listarOrdenPersonalizacion();
     Optional<OrdenPersonalizacionModel> obtenerOrdenPersonalizacionPorId(Integer idOrdenPersonalizacion);
     String actualizarOrdenPersonalizacionPorId(OrdenPersonalizacionModel ordenPersonalizacion, Integer idOrdenPersonalizacion);
+
 }

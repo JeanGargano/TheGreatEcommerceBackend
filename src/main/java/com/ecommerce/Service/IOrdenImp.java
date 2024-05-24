@@ -48,253 +48,85 @@ public class IOrdenImp implements IOrdenService {
 
     @Override
     public String crearOrden(OrdenModelDTO orden) {
-
-        List<ArticuloModel> articulos;
-
-        articulos = orden.getIdArticulo();
-
-        String textoRespuesta = "";
-        try {
-
-            for(ArticuloModel i: articulos){
-
-                if (i.getIdArticulo() == null || i.getIdArticulo() < 0) {
-
-                    textoRespuesta = "El id del Articulo no puede ser nulo ó ser menor a 0\n";
-
-
-                }
-                else if (i.getCantidad() == null || i.getCantidad() < 0) {
-                    textoRespuesta = "La cantidad no puede ser nula ó menor a 0\n";
-
-
-                }
-
-            }
-
-            String fecha = orden.getFecha();
-            String direccion = orden.getDireccion();
-            DepartamentoModel idDepartamento = orden.getIdDepartamento();
-            String tipoEntrega = orden.getTipoEntrega();
-            UsuarioModel idUsuario = orden.getIdUsuario();
-            Estado estado = orden.getEstado();
-
-            if (fecha == null || fecha.isBlank()) {
-                textoRespuesta += "La fecha no puede ser nula o estar vacia\n";
-
-            }if (direccion == null || direccion.isBlank()){
-
-                textoRespuesta += "La dirección no puede estar vacia, verifique.";
-            }if(idDepartamento == null || idDepartamento.getIdDepartamento() < 0){
-
-                textoRespuesta += "La id Del departamento no puede ser nula";
-
-            }if(tipoEntrega == null || tipoEntrega.isBlank()){
-
-                textoRespuesta += "El tipo de entrega no puede estar vacio";
-            }
-            if (idUsuario == null) {
-                textoRespuesta += "El id de Usuario no puede ser nulo o estar vacio\n";
-            }
-
-
-            ordenesExistentes = this.ordenRepository.findAll();
-
-            if (ordenesExistentes.isEmpty()) {
-
-                Integer idArticulo = 0;
-                Integer cantidad = 0;
-                Integer precioArticulo = 0;
-                Double totalPagarArticulo = 0.0;
-                Double totalPagar = 0.0;
-
-
-                if(articulos.size() == 1) {
-
-
-                    OrdenModel objO = new OrdenModel();
-
-
-
-
-                    objO.setFecha(fecha);
-                    objO.setDireccion(direccion);
-                    objO.setIdDepartamento(idDepartamento);
-                    objO.setTipoEntrega(tipoEntrega);
-                    objO.setIdUsuario(idUsuario);
-                    objO.setEstado(estado);
-
-                    for (int i = 0; i < articulos.size(); i++) {
-
-
-
-                        ArticuloModel objArticulo = articulos.get(i);
-                        idArticulo = objArticulo.getIdArticulo();
-                        Optional<ArticuloModel> datosArticulo = articuloRepository.findById(idArticulo);
-                        ArticuloModel datosA = datosArticulo.get();
-
-                        cantidad = objArticulo.getCantidad();
-                        precioArticulo = datosA.getPrecio();
-                        objO.setIdArticulo(idArticulo);
-                        objO.setCantidad(cantidad);
-
-                        generarPago objGP = new generarPago();
-                        totalPagarArticulo = objGP.generarPago(precioArticulo, cantidad);
-                        totalPagar += totalPagarArticulo;
-                        objO.setValorTotal(totalPagarArticulo);
-                        this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
-                        this.ordenRepository.save(objO);
-
-
-
-                        break;
-                    }
-                    textoRespuesta = "La orden ha sido creada con éxito.";
-                    System.out.println("El total a pagar es de: $" + totalPagar + " COP");
-                }else if(articulos.size() == 0){
-                    textoRespuesta += "Articulos no seleccionados.";
-                }else{
-
-
-
-                    for (int i = 0; i < articulos.size(); i++) {
-
-                        OrdenModel objO = new OrdenModel();
-
-                        ArticuloModel objArticulo = articulos.get(i);
-                        idArticulo = objArticulo.getIdArticulo();
-                        cantidad = objArticulo.getCantidad();
-
-                        Optional<ArticuloModel> datosArticulo = articuloRepository.findById(idArticulo);
-                        ArticuloModel datosA = datosArticulo.get();
-
-                        objO.setIdArticulo(idArticulo);
-                        objO.setCantidad(cantidad);
-                        objO.setFecha(fecha);
-
-                        objO.setDireccion(direccion);
-                        objO.setIdDepartamento(idDepartamento);
-                        objO.setTipoEntrega(tipoEntrega);
-                        objO.setIdUsuario(idUsuario);
-                        objO.setEstado(estado);
-                        precioArticulo = datosA.getPrecio();
-                        generarPago objGP = new generarPago();
-                        totalPagarArticulo = objGP.generarPago(precioArticulo, cantidad);
-                        totalPagar += totalPagarArticulo;
-                        objO.setValorTotal(totalPagarArticulo);
-                        this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
-                        this.ordenRepository.save(objO);
-
-
-
-                    }
-                    textoRespuesta = "La orden ha sido creada con éxito.";
-                    System.out.println("El total a pagar es de: $" + totalPagar + " COP");
-
-                }
-            } else {
-                if (!textoRespuesta.isEmpty()) {
-                    textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
-                } else {
-                    Integer idArticulo = 0;
-                    Integer cantidad = 0;
-                    Integer precioArticulo = 0;
-                    Double totalPagarArticulo = 0.0;
-                    Double totalPagar = 0.0;
-
-                    if(articulos.size() == 1) {
-
-
-                        OrdenModel objO = new OrdenModel();
-
-                        objO.setFecha(fecha);
-                        objO.setDireccion(direccion);
-                        objO.setIdDepartamento(idDepartamento);
-                        objO.setTipoEntrega(tipoEntrega);
-                        objO.setIdUsuario(idUsuario);
-                        objO.setEstado(estado);
-
-                        for (int i = 0; i < articulos.size(); i++) {
-
-                            ArticuloModel objArticulo = articulos.get(i);
-                            idArticulo = objArticulo.getIdArticulo();
-
-                            Optional<ArticuloModel> datosArticulo = articuloRepository.findById(idArticulo);
-                            ArticuloModel datosA = datosArticulo.get();
-
-                            cantidad = objArticulo.getCantidad();
-                            precioArticulo = datosA.getPrecio();
-
-                            objO.setIdArticulo(idArticulo);
-                            objO.setCantidad(cantidad);
-                            generarPago objGP = new generarPago();
-                            totalPagarArticulo = objGP.generarPago(precioArticulo, cantidad);
-                            objO.setValorTotal(totalPagarArticulo);
-                            totalPagar += totalPagarArticulo;
-                            this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
-                            this.ordenRepository.save(objO);
-
-
-                            break;
-                        }
-                        textoRespuesta = "La orden ha sido creada con éxito.";
-                        System.out.println("El total a pagar es de: $" + totalPagar + " COP");
-                    }else if(articulos.size() == 0){
-                        textoRespuesta += "Articulos no seleccionados.";
-                    }else{
-
-
-
-                        for (int i = 0; i < articulos.size(); i++) {
-
-                            OrdenModel objO = new OrdenModel();
-
-                            ArticuloModel objArticulo = articulos.get(i);
-                            idArticulo = objArticulo.getIdArticulo();
-
-                            Optional<ArticuloModel> datosArticulo = articuloRepository.findById(idArticulo);
-                            ArticuloModel datosA = datosArticulo.get();
-
-                            cantidad = objArticulo.getCantidad();
-                            System.out.println("la cantidad es" + cantidad);
-                            objO.setIdArticulo(idArticulo);
-                            objO.setCantidad(cantidad);
-                            objO.setFecha(fecha);
-                            objO.setDireccion(direccion);
-                            objO.setIdDepartamento(idDepartamento);
-                            objO.setTipoEntrega(tipoEntrega);
-                            objO.setIdUsuario(idUsuario);
-                            objO.setEstado(estado);
-                            precioArticulo = datosA.getPrecio();
-                            generarPago objGP = new generarPago();
-                            totalPagarArticulo = objGP.generarPago(precioArticulo, cantidad);
-                            totalPagar += totalPagarArticulo;
-                            objO.setValorTotal(totalPagarArticulo);
-                            this.articuloService.actualizarCantidadEnBd(objO, objArticulo);
-                            this.ordenRepository.save(objO);
-
-
-
-                        }
-                        textoRespuesta = "La orden ha sido creada con éxito.";
-                        System.out.println("El total a pagar es de: $" + totalPagar + " COP");
-
-                    }
-
-                }
-            }
-        } catch (NullPointerException e) {
-            textoRespuesta += "Algún objeto es nulo\n";
-            System.out.println(("message error: " + e.getLocalizedMessage()));
-
-        } catch (UncheckedIOException e) {
-            textoRespuesta += "Errores\n";
-        } catch (DataIntegrityViolationException e) {
-            System.out.println(orden.toString());
-            System.out.println("Message error:" + e.getLocalizedMessage());
-            textoRespuesta += "verifique que el usuario este creado en la base de datos\n";
+        List<ArticuloModel> articulos = orden.getIdArticulo();
+        StringBuilder textoRespuesta = new StringBuilder();
+
+        // Validaciones de la orden
+        if (orden.getFecha() == null || orden.getFecha().isBlank()) {
+            textoRespuesta.append("La fecha no puede ser nula o estar vacía\n");
         }
-        return textoRespuesta;
+        if (orden.getDireccion() == null || orden.getDireccion().isBlank()) {
+            textoRespuesta.append("La dirección no puede estar vacía, verifique.\n");
+        }
+        if (orden.getIdDepartamento() == null || orden.getIdDepartamento().getIdDepartamento() < 0) {
+            textoRespuesta.append("La id del departamento no puede ser nula o menor a 0\n");
+        }
+        if (orden.getTipoEntrega() == null || orden.getTipoEntrega().isBlank()) {
+            textoRespuesta.append("El tipo de entrega no puede estar vacío\n");
+        }
+        if (orden.getIdUsuario() == null) {
+            textoRespuesta.append("El id de Usuario no puede ser nulo o estar vacío\n");
+        }
+
+        // Validaciones de los artículos
+        for (ArticuloModel articulo : articulos) {
+            if (articulo.getIdArticulo() == null || articulo.getIdArticulo() < 0) {
+                textoRespuesta.append("El id del Articulo no puede ser nulo o menor a 0\n");
+            }
+            if (articulo.getCantidad() == null || articulo.getCantidad() < 0) {
+                textoRespuesta.append("La cantidad no puede ser nula o menor a 0\n");
+            } else {
+                Optional<ArticuloModel> datosArticulo = articuloRepository.findById(articulo.getIdArticulo());
+                if (datosArticulo.isPresent()) {
+                    ArticuloModel datosA = datosArticulo.get();
+                    String nombreArticulo = datosA.getNombre();
+                    if (articulo.getCantidad() > datosA.getCantidad()) {
+                        textoRespuesta.append("La orden no se puede crear debido a que la cantidad del articulo con nombre " )
+                                .append(nombreArticulo).append(" supera a la del stock \n");
+                    }
+                } else {
+                    textoRespuesta.append("El artículo con ID ").append(articulo.getIdArticulo()).append(" no existe\n");
+                }
+            }
+        }
+
+        // Si hay errores en las validaciones, retornar los mensajes de error
+        if (textoRespuesta.length() > 0) {
+            return textoRespuesta.toString();
+        }
+
+        // Si no hay errores, proceder con la creación de la orden
+        double totalPagar = 0.0;
+        for (ArticuloModel articulo : articulos) {
+            Optional<ArticuloModel> datosArticulo = articuloRepository.findById(articulo.getIdArticulo());
+            ArticuloModel datosA = datosArticulo.get();
+            int precioArticulo = datosA.getPrecio();
+            int cantidad = articulo.getCantidad();
+
+            // Calcular el total a pagar por artículo
+            generarPago objGP = new generarPago();
+            double totalPagarArticulo = objGP.generarPago(precioArticulo, cantidad);
+            totalPagar += totalPagarArticulo;
+
+            // Crear y guardar la orden
+            OrdenModel objO = new OrdenModel();
+            objO.setFecha(orden.getFecha());
+            objO.setDireccion(orden.getDireccion());
+            objO.setIdDepartamento(orden.getIdDepartamento());
+            objO.setTipoEntrega(orden.getTipoEntrega());
+            objO.setIdUsuario(orden.getIdUsuario());
+            objO.setEstado(orden.getEstado());
+            objO.setIdArticulo(articulo.getIdArticulo());
+            objO.setCantidad(cantidad);
+            objO.setValorTotal(totalPagarArticulo);
+
+            // Actualizar la cantidad en el stock
+            articuloService.actualizarCantidadEnBd(objO, articulo);
+            this.ordenRepository.save(objO);
+        }
+
+        // Retornar mensaje de éxito
+        return "La orden ha sido creada con éxito. El total a pagar es de: $" + totalPagar + " COP";
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.ecommerce.Model.ComentarioModel;
 
 import java.io.UncheckedIOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,9 +73,6 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
             }
             if(reciboPago == null || reciboPago.isBlank()){
                 textoRespuesta += "El recibo del pago no puede ser nulo.";
-            }
-            if(idUsuarioDiseniador == null){
-                textoRespuesta += "La id del diseñador no puede ser nula.";
             }
             if (!textoRespuesta.isEmpty()) {
                 textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
@@ -154,5 +152,7 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
 
         return textoRespuesta;
     }
+
+
 
 }
