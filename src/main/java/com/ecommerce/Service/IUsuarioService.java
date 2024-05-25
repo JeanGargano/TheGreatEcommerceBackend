@@ -18,12 +18,11 @@ public interface IUsuarioService {
 
     Optional<UsuarioModel> verificarUsuario(UsuarioModelDto usuarioDto);
 
-    List<String> listarDiseniadores();
-
     UsuarioModel asignarRol(Integer idUsuario, TipoUsuario rol, TipoUsuario rolUsuario);
 
 
     OrdenPersonalizacionModel asignarDiseniador(Integer idOrdenPersonalizacion, Integer idUsuario, TipoUsuario rolUsuario);
 
 
+    List<Object[]> mostrarDiseñadores();
 }

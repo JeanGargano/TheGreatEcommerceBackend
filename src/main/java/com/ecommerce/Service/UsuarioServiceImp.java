@@ -20,9 +20,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.io.UncheckedIOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -157,18 +155,6 @@ public class UsuarioServiceImp implements IUsuarioService {
 
     }
 
-    @Override
-    public List<String> listarDiseniadores() {
-        List<UsuarioModel> usuarios = this.usuarioRepository.findAll();
-
-        // Filtrar los usuarios por diseñador
-        List<String> diseniadores = usuarios.stream()
-                .filter(usuario -> usuario.getRol() == TipoUsuario.Diseniador)
-                .map(UsuarioModel::getNombre)
-                .collect(Collectors.toList());
-
-        return diseniadores;
-    }
 
 
     @Override
@@ -218,6 +204,11 @@ public class UsuarioServiceImp implements IUsuarioService {
 
 
         return ordenP;
+    }
+
+    @Override
+    public List<Object[]> mostrarDiseñadores() {
+        return this.usuarioRepository.mostrarDiseñadores(TipoUsuario.Diseniador);
     }
 
 

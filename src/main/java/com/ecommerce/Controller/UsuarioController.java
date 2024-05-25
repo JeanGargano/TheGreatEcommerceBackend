@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -56,9 +55,8 @@ public class UsuarioController {
     }
 
     @GetMapping("/get/diseniadores")
-    public ResponseEntity<List<String>> listarDiseniadores(){
-        List<String> diseniadores = usuarioService.listarDiseniadores();
-        return new ResponseEntity<>(diseniadores, HttpStatus.OK);
+    public ResponseEntity<Object> listarDiseniadores() {
+        return ResponseEntity.ok(usuarioService.mostrarDiseñadores());
     }
 
     @PutMapping("/{idUsuario}/asignarRol/{rol}")
