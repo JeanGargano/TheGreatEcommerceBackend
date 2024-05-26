@@ -184,7 +184,7 @@ public class EmailServiceImp implements IEmailService{
                     "                    </tr>\n" +
                     "                </thead>\n" +
                     "                <tbody>\n" +
-                                        filasTabla.toString() +
+                    filasTabla.toString() +
                     "                </tbody>\n" +
                     "            </table>\n" +
                     "            <div class=\"total\">\n" +
