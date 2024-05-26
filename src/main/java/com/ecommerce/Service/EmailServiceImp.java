@@ -115,10 +115,23 @@ public class EmailServiceImp implements IEmailService{
                     "        h1, p {\n" +
                     "            text-align: center;\n" +
                     "        }\n" +
+                    "        #info {\n" +
+                    "            text-align: center;\n" +
+                    "        }\n" +
+                    "        #resumen {\n" +
+                    "            text-align: center;\n" +
+                    "        }\n" +
+                    "        #detalles {\n" +
+                    "            text-align: center;\n" +
+                    "        }\n" +
                     "        .order-summary {\n" +
                     "            margin-top: 30px;\n" +
                     "            border-top: 2px solid #ccc;\n" +
                     "            padding-top: 20px;\n" +
+                    "            color: white; \n" +
+                    "         }\n" +
+                    "        .shipping-details {\n" +
+                    "            color: white;\n" +
                     "        }\n" +
                     "        table {\n" +
                     "            width: 100%;\n" +
@@ -139,7 +152,7 @@ public class EmailServiceImp implements IEmailService{
                     "        .footer {\n" +
                     "            margin-top: 30px;\n" +
                     "            text-align: center;\n" +
-                    "            color: #888;\n" +
+                    "            color: white;\n" +
                     "        }\n" +
                     "        .customer-info {\n" +
                     "            color: white;\n" +
@@ -153,14 +166,14 @@ public class EmailServiceImp implements IEmailService{
                     "    <div class=\"container\">\n" +
                     "        <div class=\"customer-info\">\n" +
                     "            <h1>Confirmación de Compra</h1>\n" +
-                    "            <h2>Información del Cliente</h2>\n" +
+                    "            <h2 id=\"info\">Información del Cliente</h2>\n" +
                     "            <p><strong>Nombre: </strong>"+nombreCliente+"</p>\n" +
                     "            <p><strong>Correo Electrónico: </strong>"+emailCliente+"</p>\n" +
                     "            <p><strong>Teléfono: </strong>"+numeroCliente+"</p>\n" +
                     "            <p><strong>Dirección de Envío: </strong>"+direccionEnvio+"</p>\n" +
                     "        </div>\n" +
                     "        <div class=\"order-summary\">\n" +
-                    "            <h2>Resumen de la Orden</h2>\n" +
+                    "            <h2 id=\"resumen\">Resumen de la Orden</h2>\n" +
                     "            <table>\n" +
                     "                <thead>\n" +
                     "                    <tr>\n" +
@@ -179,7 +192,7 @@ public class EmailServiceImp implements IEmailService{
                     "            </div>\n" +
                     "        </div>\n" +
                     "        <div class=\"shipping-details\">\n" +
-                    "            <h2>Detalles de Envío</h2>\n" +
+                    "            <h2 id=\"detalles\">Detalles de Envío</h2>\n" +
                     "            <p><strong>Método de Envío: </strong>"+tipoEnvio+"</p>\n" +
                     "            <p><strong>Fecha de Envío Estimada: </strong>"+fechaEnvio+"</p>\n" +
                     "            <p><strong>Dirección de Envío: </strong>"+direccionEnvio+"</p>\n" +
