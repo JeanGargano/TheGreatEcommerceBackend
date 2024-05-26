@@ -58,10 +58,11 @@ public class ComentarioServiceImp implements IComentarioService {
             }else{
                 if (comentariosExistentes.isEmpty()) {
                     this.comentarioRepository.save(comentario);
-                    textoRespuesta = "El comentario ha sido creado con éxito.";
+                    textoRespuesta = "El comentario ha sido creado con éxito. "  + "\n";
                 }else {
                     this.comentarioRepository.save(comentario);
-                    textoRespuesta = "El comentario ha sido creado con éxito.";
+                    Integer idComentario = comentario.getIdComentario();
+                    textoRespuesta = "id: " + idComentario;
                 }
             }
         } catch (NullPointerException e) {
