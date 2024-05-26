@@ -39,18 +39,21 @@ public class EmailServiceImp implements IEmailService{
     IArticuloRepository articuloRepository;
 
     @Override
-    public String enviarEmail(OrdenModel objO, Integer idUsuario, Double totalPagar, List<ArticuloModel> articulos){
+    public String enviarEmail(OrdenModel objO, Integer idUsuario, List<ArticuloModel> articulos){
 
         List<ArticuloModel> articulosBuscados = new ArrayList<>();
         Integer id = 0;
+        Double totalPagar = 0.0;
 
         for(int i=0; i<articulos.size(); i++){
+
             id = articulos.get(i).getIdArticulo();
             Optional<ArticuloModel> objA = articuloRepository.findById(id);
 
             if(objA.isPresent()){
                 articulosBuscados.add(objA.get());
             }
+            totalPagar += articulos.get(i).getCantidad() * articulosBuscados.get(i).getPrecio();
         }
 
         StringBuilder filasTabla = new StringBuilder();
