@@ -26,10 +26,11 @@ public class OrdenPersonalizacionModel {
     @JoinColumn(name = "idComentario")
     private ComentarioModel idComentario;
 
-    private String reciboPago;
-
     @ManyToOne
     @JoinColumn(name="suDiseniador")
     private UsuarioModel suDiseniador;
+
+    @JoinColumn(name = "imagenDisenio")
+    private String imagenDisenio;
 
 }

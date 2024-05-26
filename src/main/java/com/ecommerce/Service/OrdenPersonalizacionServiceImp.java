@@ -47,9 +47,9 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
 
             String descripcion = comentarioOrden.getDescripcion();
             String fechaComentario = comentarioOrden.getFecha();
-            Integer idUsuarioComentario = comentarioOrden.getIdUsuario().getIdUsuario();
+            UsuarioModel idUsuarioComentario = comentarioOrden.getIdUsuario();
 
-            String reciboPago = ordenPersonalizacion.getReciboPago();
+            String imagenDisenio = ordenPersonalizacion.getImagenDisenio();
 
 
             UsuarioModel suDiseniador = ordenPersonalizacion.getSuDiseniador();
@@ -71,9 +71,7 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
             if(fechaComentario == null || fechaComentario.isBlank()){
                 textoRespuesta += "La fecha del comentario no puede ser nula.";
             }
-            if(reciboPago == null || reciboPago.isBlank()){
-                textoRespuesta += "El recibo del pago no puede ser nulo.";
-            }
+
             if (!textoRespuesta.isEmpty()) {
                 textoRespuesta += "Por favor, corrija los problemas y vuelva a intentarlo.\n";
             }else{
@@ -81,13 +79,13 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
                 ComentarioModel comentario = ordenPersonalizacion.getIdComentario();
                 ComentarioModel objC = new ComentarioModel();
 
-                objC.setDescripcion(comentario.getDescripcion());
-                objC.setFecha(comentario.getFecha());
-                objC.setIdUsuario(comentario.getIdUsuario());
+                objC.setDescripcion(descripcion);
+                objC.setFecha(fechaComentario);
+                objC.setIdUsuario(idUsuarioComentario);
 
                 if (ordenesPersonalizacionesExistentes.isEmpty()) {
                     this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
-                    this.comentarioRepository.save(comentario);
+                    this.comentarioRepository.save(objC);
                     textoRespuesta = "La orden de personalizacion ha sido creado con éxito.";
                 }else {
 
@@ -103,7 +101,7 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
         } catch (UncheckedIOException e) {
             textoRespuesta += "Errores\n";
         } catch (DataIntegrityViolationException e) {
-            textoRespuesta += "Verifique si la personalizacion o la orden ya se encunetran creadas en la base de datos\n";
+            textoRespuesta += "Verifique si la personalizacion o la orden ya se encuentra creadas en la base de datos\n";
         }
 
         return textoRespuesta;
