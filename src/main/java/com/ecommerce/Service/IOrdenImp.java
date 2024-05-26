@@ -101,6 +101,7 @@ public class IOrdenImp implements IOrdenService {
         // Si no hay errores, proceder con la creación de la orden
         double totalPagar = 0.0;
         int vecesCorreo = 0;
+        OrdenModel objO = new OrdenModel();
         for (ArticuloModel articulo : articulos) {
             Optional<ArticuloModel> datosArticulo = articuloRepository.findById(articulo.getIdArticulo());
             ArticuloModel datosA = datosArticulo.get();
@@ -113,7 +114,6 @@ public class IOrdenImp implements IOrdenService {
             totalPagar += totalPagarArticulo;
 
             // Crear y guardar la orden
-            OrdenModel objO = new OrdenModel();
             objO.setFecha(orden.getFecha());
             objO.setDireccion(orden.getDireccion());
             objO.setIdDepartamento(orden.getIdDepartamento());
@@ -136,9 +136,9 @@ public class IOrdenImp implements IOrdenService {
 
 
         }
+        Integer suId = objO.getIdOrden();
 
-        // Retornar mensaje de éxito
-        return "La orden ha sido creada con éxito. El total a pagar es de: $" + totalPagar + " COP";
+        return "id=" + suId ;
     }
 
     @Override
