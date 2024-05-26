@@ -103,6 +103,7 @@ public class IOrdenImp implements IOrdenService {
         int vecesCorreo = 0;
         OrdenModel objO = new OrdenModel();
         for (ArticuloModel articulo : articulos) {
+
             Optional<ArticuloModel> datosArticulo = articuloRepository.findById(articulo.getIdArticulo());
             ArticuloModel datosA = datosArticulo.get();
             int precioArticulo = datosA.getPrecio();
@@ -130,7 +131,7 @@ public class IOrdenImp implements IOrdenService {
             this.ordenRepository.save(objO);
 
             if(articulos.size() >= 1 && vecesCorreo == 0) {
-                this.emailService.enviarEmail(objO, orden.getIdUsuario().getIdUsuario(), totalPagarArticulo);
+                this.emailService.enviarEmail(objO, orden.getIdUsuario().getIdUsuario(), totalPagar, articulos);
                 vecesCorreo++;
             }
 

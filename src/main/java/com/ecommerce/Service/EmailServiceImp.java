@@ -2,6 +2,7 @@ package com.ecommerce.Service;
 
 import com.ecommerce.Model.OrdenModel;
 import com.ecommerce.Model.UsuarioModel;
+import com.ecommerce.Repository.IArticuloRepository;
 import com.ecommerce.Repository.IOrdenRepository;
 import com.ecommerce.Repository.IUsuarioRepository;
 import jakarta.mail.MessagingException;
@@ -12,6 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import com.ecommerce.Model.ArticuloModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.Optional;
 
@@ -30,8 +35,33 @@ public class EmailServiceImp implements IEmailService{
     @Autowired
     IUsuarioRepository usuarioRepository;
 
+    @Autowired
+    IArticuloRepository articuloRepository;
+
     @Override
-    public String enviarEmail(OrdenModel objO, Integer idUsuario, Double totalPagar){
+    public String enviarEmail(OrdenModel objO, Integer idUsuario, Double totalPagar, List<ArticuloModel> articulos){
+
+        List<ArticuloModel> articulosBuscados = new ArrayList<>();
+        Integer id = 0;
+
+        for(int i=0; i<articulos.size(); i++){
+            id = articulos.get(i).getIdArticulo();
+            Optional<ArticuloModel> objA = articuloRepository.findById(id);
+
+            if(objA.isPresent()){
+                articulosBuscados.add(objA.get());
+            }
+        }
+
+        StringBuilder filasTabla = new StringBuilder();
+        for (int i = 0; i < articulosBuscados.size(); i++) {
+            filasTabla.append("<tr>")
+                    .append("<td>").append(articulosBuscados.get(i).getNombre()).append("</td>")
+                    .append("<td>").append(articulos.get(i).getCantidad()).append("</td>")
+                    .append("<td>").append(articulosBuscados.get(i).getPrecio()).append("</td>") // Precio Unitario de ejemplo
+                    .append("<td>$").append(articulos.get(i).getCantidad() * articulosBuscados.get(i).getPrecio()).append("</td>") // Subtotal
+                    .append("</tr>");
+        }
 
         String textoEmail = "";
         String emailCliente = "";
@@ -138,18 +168,7 @@ public class EmailServiceImp implements IEmailService{
                     "                    </tr>\n" +
                     "                </thead>\n" +
                     "                <tbody>\n" +
-                    "                    <tr>\n" +
-                    "                        <td>Producto A</td>\n" +
-                    "                        <td>2</td>\n" +
-                    "                        <td>$25.00</td>\n" +
-                    "                        <td>$50.00</td>\n" +
-                    "                    </tr>\n" +
-                    "                    <tr>\n" +
-                    "                        <td>Producto B</td>\n" +
-                    "                        <td>1</td>\n" +
-                    "                        <td>$35.00</td>\n" +
-                    "                        <td>$35.00</td>\n" +
-                    "                    </tr>\n" +
+                                        filasTabla.toString() +
                     "                </tbody>\n" +
                     "            </table>\n" +
                     "            <div class=\"total\">\n" +
