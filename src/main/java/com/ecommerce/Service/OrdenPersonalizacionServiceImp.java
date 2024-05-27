@@ -83,6 +83,12 @@ public class OrdenPersonalizacionServiceImp implements IOrdenPersonalizacionServ
                 objC.setFecha(fechaComentario);
                 objC.setIdUsuario(idUsuarioComentario);
 
+                if(idUsuarioDiseniador == null){
+                    UsuarioModel objU = new UsuarioModel();
+                    objU.setIdUsuario(-1);
+                    ordenPersonalizacion.setSuDiseniador(objU);
+                }
+
                 if (ordenesPersonalizacionesExistentes.isEmpty()) {
                     this.ordenPersonalizacionRepository.save(ordenPersonalizacion);
                     this.comentarioRepository.save(objC);
